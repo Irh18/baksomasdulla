@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warung Bakso</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #800000;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .container {
+            padding: 20px;
+        }
+        .menu-items {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        .menu-item {
+            background-color: #f39c12;
+            padding: 10px;
+            border-radius: 8px;
+            color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            word-wrap: break-word;
+        }
+        .menu-item button {
+            background-color: #800000;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-top: 5px;
+        }
+        .menu-item button:hover {
+            background-color: #7f1e1e;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .search-container input {
+            padding: 12px;
+            width: 80%;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .cart {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        .cart h2 {
+            text-align: center;
+            color: #800000;
+            font-size: 2em;
+        }
+        .table-container {
+            margin-top: 30px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 1em;
+        }
+        .btn-detail {
+            background-color: #f39c12;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-size: 1em;
+        }
+        .btn-delete {
+            background-color: #800000;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-size: 1em;
+        }
+        .btn-detail:hover, .btn-delete:hover {
+            background-color: #e67e22;
+        }
+        .btn-checkout {
+            background-color: #800000;
+            color: #fff;
+            border: none;
+            padding: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .btn-checkout:hover {
+            background-color: #7f1e1e;
+        }
+        .btn-action {
+            margin-left: 5px;
+        }
+        .cart ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .cart li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+        }
+        .cart li span {
+            text-align: left;
+        }
+        .cart li button {
+            padding: 5px;
+            border-radius: 5px;
+            color: white;
+            border: none;
+            background: #800000;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Warung Bakso</h1>
+</header>
+
+<div class="container">
+    <div class="search-container">
+        <input type="text" id="search-item" placeholder="Cari item..." onkeyup="searchMenu()">
+    </div>
+
+    <div class="menu-items" id="menu-items">
+        <div class="menu-item" data-name="Bakso">
+            <div><strong>Bakso</strong></div>
+            <button onclick="addToCart('Bakso', 10000)">Tambah</button>
+        </div>
+        <div class="menu-item" data-name="Pangsit">
+            <div><strong>Pangsit</strong></div>
+            <button onclick="addToCart('Pangsit', 5000)">Tambah</button>
+        </div>
+        <div class="menu-item" data-name="Buras">
+            <div><strong>Buras</strong></div>
+            <button onclick="addToCart('Buras', 7000)">Tambah</button>
+        </div>
+        <div class="menu-item" data-name="Indomie">
+            <div><strong>Indomie</strong></div>
+            <button onclick="addToCart('Indomie', 8000)">Tambah</button>
+        </div>
+        <div class="menu-item" data-name="Kacang">
+            <div><strong>Kacang</strong></div>
+            <button onclick="addToCart('Kacang', 4000)">Tambah</button>
+        </div>
+        <div class="menu-item" data-name="Ice Cream">
+            <div><strong>Ice Cream</strong></div>
+            <button onclick="addToCart('Ice Cream', 12000)">Tambah</button>
+        </div>
+    </div>
+
+    <div class="cart">
+        <h2>Keranjang</h2>
+        <ul id="cart-list"></ul>
+        <p><strong>Total Harga: Rp <span id="total-price">0</span></strong></p>
+        <button class="btn-checkout" onclick="completeTransaction()">Checkout</button>
+    </div>
+
+    <div class="table-container">
+        <h2>Hasil Penjualan</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tanggal & Waktu</th>
+                    <th>Total Pembelian</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="sales-list"></tbody>
+        </table>
+        <p><strong>Total Jumlah Keseluruhan: Rp <span id="total-sales">0</span></strong></p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    let cart = [];
+    let sales = [];
+    let totalSales = 0;
+
+    // Fungsi untuk memformat nominal dengan pemisah ribuan
+    function formatCurrency(amount) {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    // Fungsi untuk menambah item ke keranjang
+    function addToCart(item, price) {
+        const existingItem = cart.find(cartItem => cartItem.name === item);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({ name: item, price: price, quantity: 1 });
+        }
+        updateCart();
+    }
+
+    // Fungsi untuk mengupdate tampilan keranjang belanja
+    function updateCart() {
+        const cartList = document.getElementById('cart-list');
+        const totalPriceElement = document.getElementById('total-price');
+        cartList.innerHTML = '';
+        let total = 0;
+
+        cart.forEach(item => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `${item.name} x${item.quantity} - Rp ${formatCurrency(item.price * item.quantity)} 
+            <button onclick="removeItemFromCart('${item.name}')">Hapus</button>`;
+            cartList.appendChild(listItem);
+            total += item.price * item.quantity;
+        });
+
+        totalPriceElement.innerText = formatCurrency(total);
+    }
+
+    // Fungsi untuk menghapus item dari keranjang
+    function removeItemFromCart(itemName) {
+        cart = cart.filter(item => item.name !== itemName);
+        updateCart();
+    }
+
+// Fungsi untuk menyelesaikan transaksi
+function completeTransaction() {
+    if (cart.length === 0) {
+        Swal.fire('Keranjang kosong!', 'Tambah item ke keranjang sebelum checkout.', 'error');
+        return;
+    }
+
+    // Total harga transaksi
+    const totalAmount = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    
+// Menyimpan detail transaksi
+const transaction = {
+    date: new Date().toLocaleString('id-ID', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false // Mengatur format waktu ke 24 jam
+    }),
+    totalAmount: totalAmount,
+    details: [...cart]  // Menyimpan rincian item dalam transaksi
+};
+
+
+    // Menambahkan transaksi baru ke awal array sales (tampil di atas)
+    sales.unshift(transaction);
+    totalSales += totalAmount;
+    updateSales();
+    
+    Swal.fire('Transaksi Sukses!', `Total pembayaran: Rp ${formatCurrency(totalAmount)}`, 'success');
+    
+    // Mengosongkan keranjang setelah checkout
+    cart = [];
+    updateCart();
+}
+
+
+
+// Fungsi untuk mengupdate daftar penjualan
+function updateSales() {
+    const salesList = document.getElementById('sales-list');
+    const totalSalesElement = document.getElementById('total-sales');
+    salesList.innerHTML = '';  // Clear existing sales list
+    
+    // Tampilkan setiap transaksi dari array sales
+    sales.forEach((sale, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${sale.date}</td>
+            <td>Rp ${formatCurrency(sale.totalAmount)}</td>
+            <td>
+                <!-- Tombol "Lihat Detail" dengan pemanggilan yang benar -->
+                <button class="btn-detail" onclick="viewSaleDetails(${index})">Lihat Detail</button>
+                <button class="btn-delete" onclick="deleteSale(${index})">Hapus</button>
+            </td>
+        `;
+        salesList.appendChild(row);
+    });
+    totalSalesElement.innerText = formatCurrency(totalSales);
+}
+
+
+
+// Fungsi untuk melihat detail transaksi
+function viewSaleDetails(index) {
+    const sale = sales[index];  // Ambil data transaksi berdasarkan index
+    let detailsText = 'Detail Transaksi:\n';
+    let totalPrice = 0;
+
+    // Tampilkan detail setiap item dalam transaksi
+    sale.details.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        totalPrice += itemTotal;
+        detailsText += `${item.name} - Rp ${formatCurrency(item.price)} x ${item.quantity} = Rp ${formatCurrency(itemTotal)}\n`;
+    });
+    
+    // Tampilkan total transaksi
+    detailsText += `\n<strong>Total Harga: Rp ${formatCurrency(totalPrice)}</strong>`;
+    
+    // Gunakan SweetAlert untuk menampilkan detail
+    Swal.fire({
+        title: `Detail Transaksi - ${sale.date}`,
+        html: detailsText.replace(/\n/g, '<br>'),
+        icon: 'info',
+    });
+}
+
+
+
+    // Fungsi untuk menghapus penjualan
+    function deleteSale(index) {
+        const sale = sales[index];
+        totalSales -= sale.totalAmount;
+        sales.splice(index, 1);
+        updateSales();
+    }
+
+    // Fungsi untuk mencari item menu
+    function searchMenu() {
+        const searchTerm = document.getElementById('search-item').value.toLowerCase();
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            const itemName = item.dataset.name.toLowerCase();
+            if (itemName.includes(searchTerm)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
