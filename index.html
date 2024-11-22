@@ -31,33 +31,23 @@
         }
         .menu-items {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
             margin-top: 20px;
             max-width: 100%;
+            max-width: 100%;
             overflow: hidden;
         }
-        .menu-item {
-            background-color: #f39c12;
-            padding: 10px;
-            border-radius: 8px;
-            color: #fff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            word-wrap: break-word;
-        }
-        .menu-item button {
-            background-color: #800000;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 1em;
-            margin-top: 5px;
-        }
-        .menu-item button:hover {
-            background-color: #7f1e1e;
-        }
+
+.menu-item button {
+    width: 100%;
+    height: 40px;
+    background-color: #f39c12;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
         .search-container {
             margin-bottom: 20px;
             text-align: center;
@@ -221,29 +211,23 @@
     </div>
 
     <div class="menu-items" id="menu-items">
-        <div class="menu-item" data-name="Bakso">
-            <div><strong>Bakso Ori</strong></div>
-            <button onclick="addToCart('Bakso Ori', 15000)">15.000</button>
+        <div class="menu-item" data-name="Bakso Ori">
+            <button onclick="addToCart('Bakso Ori', 15000)"><strong>Bakso Ori<br>15.000</strong></button>
         </div>
-        <div class="menu-item" data-name="Pangsit">
-            <div><strong>Pangsit Ori</strong></div>
-            <button onclick="addToCart('Pangsit Ori', 15000)">15.000</button>
+        <div class="menu-item" data-name="Pangsit Ori">
+            <button onclick="addToCart('Pangsit Ori', 15000)"><strong>Pangsit Ori<br>15.000</strong></button>
         </div>
         <div class="menu-item" data-name="Buras">
-            <div><strong>Buras</strong></div>
-            <button onclick="addToCart('Buras', 7000)">Tambah</button>
+            <button onclick="addToCart('Buras', 7000)"><strong>Buras<br>5.000</strong></button>
         </div>
         <div class="menu-item" data-name="Indomie">
-            <div><strong>Indomie</strong></div>
-            <button onclick="addToCart('Indomie', 8000)">Tambah</button>
+            <button onclick="addToCart('Indomie', 8000)"><strong>Indomie<br>4.000</strong></button>
         </div>
         <div class="menu-item" data-name="Kacang">
-            <div><strong>Kacang</strong></div>
-            <button onclick="addToCart('Kacang', 4000)">Tambah</button>
+            <button onclick="addToCart('Kacang', 4000)"><strong>Kacang<br>1.000</strong></button>
         </div>
         <div class="menu-item" data-name="Ice Cream">
-            <div><strong>Ice Cream</strong></div>
-            <button onclick="addToCart('Ice Cream', 12000)">Tambah</button>
+            <button onclick="addToCart('Ice Cream', 12000)"><strong>Ice Cream<br>3.000</strong></button>
         </div>
     </div>
 
@@ -475,7 +459,7 @@ function filterSalesByDate(selectedDates, dateStr) {
             <td>${sale.date}</td>
             <td>Rp ${formatCurrency(sale.totalAmount)}</td>
             <td>
-                <button class="btn-detail" onclick="viewSaleDetails(${index})">Lihat Detail</button>
+                <button class="btn-detail" onclick="viewSaleDetails(${index})">Detail</button>
                 <button class="btn-delete" onclick="deleteSale(${index})">Hapus</button>
             </td>
         `;
