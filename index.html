@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -5,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Warung Bakso</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,6 +14,7 @@
             color: #333;
             margin: 0;
             padding: 0;
+            font-size: 12px;
         }
         header {
             background-color: #800000;
@@ -47,7 +50,6 @@
             background-color: #800000;
             color: #fff;
             border: none;
-            padding: 5px 10px;
             cursor: pointer;
             border-radius: 5px;
             font-size: 1em;
@@ -167,7 +169,7 @@
     margin: 0;
     padding: .8em 1em 0;
     color: inherit;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 600;
     text-align: center;
     text-transform: none;
@@ -180,13 +182,31 @@
     padding: 1em 1.6em .3em;
     overflow: auto;
     color: inherit;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: normal;
     line-height: normal;
     text-align: left;
     word-wrap: break-word;
     word-break: break-word;
 }
+.filter-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+.filter-container label {
+    font-size: 1em;
+    color: #333;
+}
+.filter-container input {
+    padding: 8px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
     </style>
 </head>
 <body>
@@ -202,12 +222,12 @@
 
     <div class="menu-items" id="menu-items">
         <div class="menu-item" data-name="Bakso">
-            <div><strong>Bakso</strong></div>
-            <button onclick="addToCart('Bakso', 10000)">Tambah</button>
+            <div><strong>Bakso Ori</strong></div>
+            <button onclick="addToCart('Bakso Ori', 15000)">15.000</button>
         </div>
         <div class="menu-item" data-name="Pangsit">
-            <div><strong>Pangsit</strong></div>
-            <button onclick="addToCart('Pangsit', 5000)">Tambah</button>
+            <div><strong>Pangsit Ori</strong></div>
+            <button onclick="addToCart('Pangsit Ori', 15000)">15.000</button>
         </div>
         <div class="menu-item" data-name="Buras">
             <div><strong>Buras</strong></div>
@@ -236,6 +256,10 @@
 
     <div class="table-container">
         <h2>Hasil Penjualan</h2>
+            <div class="filter-container">
+        <input type="text" id="filter-date">
+    </div>
+
         <table>
             <thead>
                 <tr>
@@ -251,8 +275,20 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    flatpickr("#filter-date", {
+        dateFormat: "d/m/Y",
+        defaultDate: null,
+        onChange: filterSalesByDate,
+    });
+});
+
+
+
     let cart = [];
     let sales = [];
     let totalSales = 0;
@@ -260,6 +296,12 @@
     // Fungsi untuk memformat nominal dengan pemisah ribuan
     function formatCurrency(amount) {
         return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+        // Fungsi untuk memformat tanggal
+    function formatDate(date) {
+        const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+        return new Date(date).toLocaleDateString("id-ID", options);
     }
 
     // Fungsi untuk menambah item ke keranjang
@@ -297,68 +339,49 @@
         updateCart();
     }
 
-// Fungsi untuk menyelesaikan transaksi
-function completeTransaction() {
-    if (cart.length === 0) {
-        Swal.fire('Keranjang kosong!', 'Tambah item ke keranjang sebelum checkout.', 'error');
-        return;
+    // Fungsi untuk menambah transaksi
+    function completeTransaction() {
+        if (cart.length === 0) {
+            Swal.fire('Keranjang kosong!', 'Tambah item ke keranjang sebelum checkout.', 'error');
+            return;
+        }
+
+        const totalAmount = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+        const transaction = {
+            date: formatDate(new Date()), // Format sesuai filter
+            totalAmount: totalAmount,
+            details: [...cart]
+        };
+
+        sales.unshift(transaction);
+        totalSales += totalAmount;
+        updateSales();
+
+        Swal.fire('Transaksi Sukses!', `Total pembayaran: Rp ${formatCurrency(totalAmount)}`, 'success');
+        cart = [];
+        updateCart();
     }
 
-    // Total harga transaksi
-    const totalAmount = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-    
-// Menyimpan detail transaksi
-const transaction = {
-    date: new Date().toLocaleString('id-ID', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false // Mengatur format waktu ke 24 jam
-    }),
-    totalAmount: totalAmount,
-    details: [...cart]  // Menyimpan rincian item dalam transaksi
-};
 
-
-    // Menambahkan transaksi baru ke awal array sales (tampil di atas)
-    sales.unshift(transaction);
-    totalSales += totalAmount;
-    updateSales();
-    
-    Swal.fire('Transaksi Sukses!', `Total pembayaran: Rp ${formatCurrency(totalAmount)}`, 'success');
-    
-    // Mengosongkan keranjang setelah checkout
-    cart = [];
-    updateCart();
-}
-
-
-
-// Fungsi untuk mengupdate daftar penjualan
-function updateSales() {
-    const salesList = document.getElementById('sales-list');
-    const totalSalesElement = document.getElementById('total-sales');
-    salesList.innerHTML = '';  // Clear existing sales list
-    
-    // Tampilkan setiap transaksi dari array sales
-    sales.forEach((sale, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${sale.date}</td>
-            <td>Rp ${formatCurrency(sale.totalAmount)}</td>
-            <td>
-                <!-- Tombol "Lihat Detail" dengan pemanggilan yang benar -->
-                <button class="btn-detail" onclick="viewSaleDetails(${index})">Lihat Detail</button>
-                <button class="btn-delete" onclick="deleteSale(${index})">Hapus</button>
-            </td>
-        `;
-        salesList.appendChild(row);
-    });
-    totalSalesElement.innerText = formatCurrency(totalSales);
-}
+    // Fungsi untuk memperbarui daftar penjualan
+    function updateSales() {
+        const salesList = document.getElementById('sales-list');
+        const totalSalesElement = document.getElementById('total-sales');
+        salesList.innerHTML = '';
+        sales.forEach((sale, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${sale.date}</td>
+                <td>Rp ${formatCurrency(sale.totalAmount)}</td>
+                <td>
+                    <button class="btn-detail" onclick="viewSaleDetails(${index})">Detail</button>
+                    <button class="btn-delete" onclick="deleteSale(${index})">Hapus</button>
+                </td>
+            `;
+            salesList.appendChild(row);
+        });
+        totalSalesElement.innerText = formatCurrency(totalSales);
+    }
 
 
 
@@ -388,13 +411,83 @@ function viewSaleDetails(index) {
 
 
 
-    // Fungsi untuk menghapus penjualan
-    function deleteSale(index) {
-        const sale = sales[index];
-        totalSales -= sale.totalAmount;
-        sales.splice(index, 1);
+// Fungsi untuk menghapus penjualan dengan konfirmasi PIN
+function deleteSale(index) {
+    Swal.fire({
+        title: 'Konfirmasi Penghapusan',
+        html: `
+            <p>Masukkan PIN untuk menghapus transaksi.</p>
+            <input type="password" id="pin-input" class="swal2-input" placeholder="PIN" maxlength="4">
+        `,
+        preConfirm: () => {
+            const pin = Swal.getPopup().querySelector('#pin-input').value;
+            if (!pin) {
+                Swal.showValidationMessage('PIN tidak boleh kosong');
+                return false;
+            }
+            return pin;
+        },
+        inputAttributes: {
+            maxlength: 4,
+            autocapitalize: 'off',
+            autocorrect: 'off',
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Hapus',
+        cancelButtonText: 'Batal',
+    }).then(result => {
+        if (result.isConfirmed) {
+            if (result.value === '0000') { // PIN yang benar
+                const sale = sales[index];
+                totalSales -= sale.totalAmount;
+                sales.splice(index, 1);
+                updateSales();
+                Swal.fire('Sukses!', 'Transaksi berhasil dihapus.', 'success');
+            } else {
+                Swal.fire('Gagal!', 'PIN salah, transaksi tidak dihapus.', 'error');
+            }
+        }
+    });
+}
+
+function filterSalesByDate(selectedDates, dateStr) {
+    const filterDate = dateStr; // Tanggal yang dipilih dari Flatpickr
+    const salesList = document.getElementById('sales-list');
+    const totalSalesElement = document.getElementById('total-sales');
+    salesList.innerHTML = '';
+
+    // Jika tidak ada tanggal yang dipilih, tampilkan semua data
+    if (!filterDate) {
         updateSales();
+        return;
     }
+
+    // Filter transaksi berdasarkan tanggal
+    const filteredSales = sales.filter(sale => sale.date === filterDate);
+    
+    // Hitung total berdasarkan transaksi yang difilter
+    const filteredTotalSales = filteredSales.reduce((total, sale) => total + sale.totalAmount, 0);
+
+    // Perbarui tampilan tabel dengan transaksi yang difilter
+    filteredSales.forEach((sale, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${sale.date}</td>
+            <td>Rp ${formatCurrency(sale.totalAmount)}</td>
+            <td>
+                <button class="btn-detail" onclick="viewSaleDetails(${index})">Lihat Detail</button>
+                <button class="btn-delete" onclick="deleteSale(${index})">Hapus</button>
+            </td>
+        `;
+        salesList.appendChild(row);
+    });
+
+    // Tampilkan total keseluruhan yang difilter
+    totalSalesElement.innerText = formatCurrency(filteredTotalSales);
+}
+
+
+
 
     // Fungsi untuk mencari item menu
     function searchMenu() {
