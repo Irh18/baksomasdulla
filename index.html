@@ -278,6 +278,9 @@
         <div class="penghitung-item" id="penghitung-item">
             <p>Bakso: 0 Porsi</p>
             <p>Pangsit: 0 Porsi</p>
+            <p>Ketupat: 0 Biji</p>
+            <p>Bakwan: 0 Biji</p>
+            <p>Kacang: 0 Bungkus</p>
         </div>
 
         <!-- Pop-up Kasir -->
@@ -441,6 +444,9 @@
         let penghitung = {
             Bakso: 0,
             Pangsit: 0,
+            Ketupat: 0,
+            Bakwan: 0,
+            Kacang: 0,
         };
 
         riwayat.forEach((transaksi) => {
@@ -457,6 +463,21 @@
                 if (namaItem.toLowerCase().includes("pangsit")) {
                     penghitung.Pangsit += parseInt(jumlah);
                 }
+
+                // Hitung Ketupat
+                if (namaItem.toLowerCase().includes("ketupat")) {
+                    penghitung.Ketupat += parseInt(jumlah);
+                }
+
+                // Hitung Bakwan
+                if (namaItem.toLowerCase().includes("bakwan")) {
+                    penghitung.Bakwan += parseInt(jumlah);
+                }
+
+                // Hitung Kacang
+                if (namaItem.toLowerCase().includes("kacang")) {
+                    penghitung.Kacang += parseInt(jumlah);
+                }
             });
         });
 
@@ -464,6 +485,9 @@
         document.getElementById("penghitung-item").innerHTML = `
             <p>Bakso: ${penghitung.Bakso} Porsi</p>
             <p>Pangsit: ${penghitung.Pangsit} Porsi</p>
+            <p>Ketupat: ${penghitung.Ketupat} Biji</p>
+            <p>Bakwan: ${penghitung.Bakwan} Biji</p>
+            <p>Kacang: ${penghitung.Kacang} Bungkus</p>
         `;
     }
 
