@@ -588,4 +588,187 @@
                 itemExist.jumlah += item.jumlah;
             } else {
                 belanjaGabung.push({ ...item });
-    
+            }
+        });
+
+        // Kosongkan daftar belanja
+        daftarBelanja.innerHTML = "";
+
+        // Tampilkan item belanja
+        belanjaGabung.forEach((item, index) => {
+            let totalHarga = item.harga * item.jumlah;
+            totalBayar += totalHarga;
+
+            let row = `<tr>
+                <td>${item.nama}</td>
+                <td>${item.jumlah}</td>
+                <td>Rp ${formatRupiah(item.harga)}</td>
+                <td>Rp ${formatRupiah(totalHarga)}</td>
+                <td>
+                    <button onclick="hapusDariBelanja('${item.nama}')" class="batalkan-perubahan">Hapus</button>
+                </td>
+            </tr>`;
+            daftarBelanja.innerHTML += row;
+        });
+
+        // Tampilkan total bayar
+        document.getElementById("total-bayar").innerText = `Total Bayar: Rp ${formatRupiah(totalBayar)}`;
+
+        // Ubah warna tombol Tutup jika ada item dalam daftar belanja
+        let tombolTutup = document.querySelector("#kasir-popup button[onclick='tutupKasir()']");
+        if (belanja.length > 0) {
+            tombolTutup.classList.add("tutup-merah");
+        } else {
+            tombolTutup.classList.remove("tutup-merah");
+        }
+    }
+
+    function hapusDariBelanja(nama) {
+        let belanja = JSON.parse(localStorage.getItem("belanja")) || [];
+        belanja = belanja.filter((item) => item.nama !== nama); // Hapus item dari belanja
+        localStorage.setItem("belanja", JSON.stringify(belanja));
+        perbaruiDaftarBelanja();
+    }
+
+    function hitungKembalian() {
+        let totalBayar = parseFloat(hapusPemisahRibuan(document.getElementById("total-bayar").innerText.replace("Total Bayar: Rp ", "")));
+        let uangPembayaran = parseFloat(hapusPemisahRibuan(document.getElementById("uang-pembayaran").value));
+
+        if (isNaN(uangPembayaran)) {
+            alert("Masukkan jumlah uang pembayaran!");
+            return;
+        }
+
+        if (uangPembayaran < totalBayar) {
+            alert("Uang pembayaran tidak cukup!");
+            return;
+        }
+
+        let kembalian = uangPembayaran - totalBayar;
+        document.getElementById("kembalian").innerText = `Kembalian: Rp ${formatRupiah(kembalian)}`;
+    }
+
+    function simpanTransaksi() {
+        let belanja = JSON.parse(localStorage.getItem("belanja")) || [];
+        if (belanja.length === 0) {
+            alert("Belanjaan kosong!");
+            return;
+        }
+
+        let riwayat = JSON.parse(localStorage.getItem("riwayatPenjualan")) || [];
+        let totalBayar = belanja.reduce((total, item) => total + item.harga * item.jumlah, 0);
+
+        // Jika metode pembayaran adalah GRAB, gunakan total harga GRAB
+        if (metodePembayaranTerpilih === "GRAB") {
+            let totalHargaGrab = hapusPemisahRibuan(document.getElementById("total-harga-grab").value);
+            if (!totalHargaGrab || isNaN(totalHargaGrab)) {
+                alert("Masukkan total harga GRAB yang valid!");
+                return;
+            }
+            totalBayar = parseFloat(totalHargaGrab);
+        }
+
+        // Format nama item dengan jumlah (misal: "2 Bakso Ori, 3 Bakso Telur")
+        let namaItem = belanja.map(item => `${item.jumlah} ${item.nama}`).join(", ");
+
+        let transaksi = {
+            nama: namaItem,
+            jumlah: belanja.reduce((total, item) => total + item.jumlah, 0),
+            total: totalBayar,
+            keterangan: metodePembayaranTerpilih || "CASH", // Default ke CASH jika tidak ada metode yang dipilih
+            lunas: false, // Default status lunas
+        };
+
+        if (indexTransaksiEdit !== null) {
+            // Jika sedang dalam mode edit, perbarui transaksi yang ada
+            riwayat[indexTransaksiEdit] = transaksi;
+            indexTransaksiEdit = null; // Reset mode edit
+        } else {
+            // Jika tidak, tambahkan transaksi baru
+            riwayat.push(transaksi);
+        }
+
+        localStorage.setItem("riwayatPenjualan", JSON.stringify(riwayat));
+        localStorage.removeItem("belanja"); // Kosongkan belanja
+        metodePembayaranTerpilih = ""; // Reset metode pembayaran
+        tutupKasir();
+        location.reload(); // Muat ulang halaman untuk memperbarui tampilan
+    }
+
+    function hapusItem(index) {
+        let pin = prompt("Masukkan PIN untuk menghapus item:");
+        if (pin !== "0000") {
+            alert("PIN salah! Penghapusan dibatalkan.");
+            return;
+        }
+
+        let daftar = JSON.parse(localStorage.getItem("daftarItem")) || [];
+        daftar.splice(index, 1); // Hapus item dari array
+        localStorage.setItem("daftarItem", JSON.stringify(daftar)); // Simpan kembali ke localStorage
+        location.reload(); // Muat ulang halaman untuk memperbarui tampilan
+    }
+
+    function tandaiLunas(index) {
+        let riwayat = JSON.parse(localStorage.getItem("riwayatPenjualan")) || [];
+        riwayat[index].lunas = true; // Tandai sebagai lunas
+        localStorage.setItem("riwayatPenjualan", JSON.stringify(riwayat));
+        location.reload(); // Muat ulang halaman untuk memperbarui tampilan
+    }
+
+    function editTransaksi(index) {
+        let riwayat = JSON.parse(localStorage.getItem("riwayatPenjualan")) || [];
+        let transaksi = riwayat[index];
+
+        // Simpan indeks transaksi yang sedang diedit
+        indexTransaksiEdit = index;
+
+        // Tambahkan item ke keranjang
+        let belanja = JSON.parse(localStorage.getItem("belanja")) || [];
+        transaksi.nama.split(", ").forEach((item) => {
+            let [jumlah, ...nama] = item.split(" ");
+            let namaItem = nama.join(" ");
+            let harga = JSON.parse(localStorage.getItem("daftarItem")).find((item) => item.nama === namaItem).harga;
+            belanja.push({ nama: namaItem, harga, jumlah: parseInt(jumlah) });
+        });
+
+        localStorage.setItem("belanja", JSON.stringify(belanja));
+
+        // Aktifkan metode pembayaran sesuai transaksi
+        pilihMetodePembayaran(transaksi.keterangan);
+
+        // Jika metode GRAB, isi nilai total harga GRAB
+        if (transaksi.keterangan === "GRAB") {
+            document.getElementById("total-harga-grab").value = formatRupiah(transaksi.total);
+        }
+
+        // Tampilkan tombol "Batalkan Perubahan"
+        document.getElementById("batalkan-perubahan").style.display = "inline-block";
+
+        // Buka pop-up kasir
+        bukaKasir();
+    }
+
+    function batalkanPerubahan() {
+        // Reset mode edit
+        indexTransaksiEdit = null;
+        localStorage.removeItem("belanja"); // Kosongkan belanja
+        document.getElementById("batalkan-perubahan").style.display = "none"; // Sembunyikan tombol "Batalkan Perubahan"
+        tutupKasir();
+    }
+
+    function hapusTransaksi(index) {
+        let pin = prompt("Masukkan PIN untuk menghapus transaksi:");
+        if (pin !== "0000") {
+            alert("PIN salah! Penghapusan dibatalkan.");
+            return;
+        }
+
+        let riwayat = JSON.parse(localStorage.getItem("riwayatPenjualan")) || [];
+        riwayat.splice(index, 1); // Hapus transaksi dari riwayat
+        localStorage.setItem("riwayatPenjualan", JSON.stringify(riwayat));
+        location.reload(); // Muat ulang halaman untuk memperbarui tampilan
+    }
+</script>
+
+</body>
+</html>
