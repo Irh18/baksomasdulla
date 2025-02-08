@@ -228,6 +228,26 @@
             font-size: 1.2em;
             color: #555;
         }
+        /* Tombol Input Baru (Ikon Keranjang) */
+        .tombol-keranjang {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .tombol-keranjang:hover {
+            background-color: #b71c1c;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
@@ -243,9 +263,6 @@
 <main>
     <!-- Halaman Kasir -->
     <section id="kasir">
-        <!-- Tombol Input Baru -->
-        <button onclick="bukaKasir()" class="filter-button">Input Baru</button>
-
         <h2>Riwayat Penjualan</h2>
 
         <!-- Tombol Filter -->
@@ -358,6 +375,9 @@
     </section>
 </main>
 
+<!-- Tombol Input Baru (Ikon Keranjang) -->
+<button class="tombol-keranjang" onclick="bukaKasir()">🛒</button>
+
 <script>
     // Fungsi untuk memformat angka dengan pemisah ribuan (titik)
     function formatRupiah(angka) {
@@ -420,7 +440,7 @@
             totalKeseluruhan += item.total;
             let row = `<tr>
                 <td>${index + 1}</td>
-                <td>${item.nama}</td>
+                <td>${item.nama.replace(/, /g, "<br>")}</td>
                 <td>${item.jumlah}</td>
                 <td class="${item.lunas ? 'lunas' : ''}">Rp ${formatRupiah(item.total)}</td>
                 <td>${item.keterangan}</td>
