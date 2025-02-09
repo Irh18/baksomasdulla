@@ -73,10 +73,6 @@
             background-color: white; /* Warna latar belakang default untuk semua baris */
         }
 
-        tr:hover {
-            background-color: #f0f8e2; /* Warna latar belakang saat baris dihover */
-        }
-
         tr.lunas {
             background-color: #d4edda;
             color: #155724;
@@ -607,6 +603,12 @@
         }
 
         function tutupKasir() {
+            // Hapus data belanja dari localStorage
+            localStorage.removeItem("belanja");
+
+            // Perbarui tampilan daftar belanja
+            perbaruiDaftarBelanja();
+
             document.getElementById("overlay").style.display = "none";
             document.getElementById("kasir-popup").style.display = "none";
         }
@@ -778,9 +780,10 @@
         function hapusItem(index) {
             Swal.fire({
                 title: 'Masukkan PIN',
-                input: 'text',
+                input: 'number', // Ubah tipe input menjadi number
                 inputAttributes: {
-                    autocapitalize: 'off'
+                    autocapitalize: 'off',
+                    inputmode: 'numeric' // Atribut untuk menampilkan keyboard angka
                 },
                 showCancelButton: true,
                 confirmButtonText: 'Hapus',
@@ -812,9 +815,10 @@
         function hapusTransaksi(index) {
             Swal.fire({
                 title: 'Masukkan PIN',
-                input: 'text',
+                input: 'number', // Ubah tipe input menjadi number
                 inputAttributes: {
-                    autocapitalize: 'off'
+                    autocapitalize: 'off',
+                    inputmode: 'numeric' // Atribut untuk menampilkan keyboard angka
                 },
                 showCancelButton: true,
                 confirmButtonText: 'Hapus',
