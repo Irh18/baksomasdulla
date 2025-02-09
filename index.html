@@ -338,7 +338,7 @@
                     <button onclick="pilihMetodePembayaran('GRAB')">GRAB</button>
                 </div>
                 <button onclick="simpanTransaksi()" class="filter-button">Simpan Transaksi</button>
-                <button onclick="tutupKasir()" class="batalkan-perubahan">Tutup</button>
+                <button onclick="tutupKasir()" class="batalkan-perubahan" id="tutup-button">Tutup</button>
                 <button class="batalkan-perubahan" id="batalkan-perubahan" onclick="batalkanPerubahan()" style="display: none;">Batalkan Perubahan</button>
             </div>
         </section>
@@ -576,6 +576,15 @@
             resetKolom();
             tampilkanItemKasir(daftar);
             perbaruiDaftarBelanja();
+
+            // Sembunyikan tombol "Tutup" dan tampilkan tombol "Batalkan Perubahan" jika mode edit aktif
+            if (indexTransaksiEdit !== null) {
+                document.querySelector("#kasir-popup button[onclick='tutupKasir()']").style.display = "none";
+                document.getElementById("batalkan-perubahan").style.display = "inline-block";
+            } else {
+                document.querySelector("#kasir-popup button[onclick='tutupKasir()']").style.display = "inline-block";
+                document.getElementById("batalkan-perubahan").style.display = "none";
+            }
         }
 
         function resetKolom() {
@@ -770,25 +779,66 @@
         }
 
         function hapusItem(index) {
-            let pin = prompt("Masukkan PIN untuk menghapus item:");
-            if (pin !== "0000") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Kesalahan',
-                    text: 'PIN salah! Penghapusan dibatalkan.',
-                });
-                return;
-            }
-
-            let daftar = JSON.parse(localStorage.getItem("daftarItem")) || [];
-            daftar.splice(index, 1);
-            localStorage.setItem("daftarItem", JSON.stringify(daftar));
-            location.reload();
-
             Swal.fire({
-                icon: 'success',
-                title: 'Berhasil',
-                text: 'Item telah dihapus!',
+                title: 'Masukkan PIN',
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Hapus',
+                showLoaderOnConfirm: true,
+                preConfirm: (pin) => {
+                    if (pin !== "0000") {
+                        Swal.showValidationMessage(`PIN salah! Penghapusan dibatalkan.`);
+                    }
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let daftar = JSON.parse(localStorage.getItem("daftarItem")) || [];
+                    daftar.splice(index, 1);
+                    localStorage.setItem("daftarItem", JSON.stringify(daftar));
+                    location.reload();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Item telah dihapus!',
+                    });
+                }
+            });
+        }
+
+        function hapusTransaksi(index) {
+            Swal.fire({
+                title: 'Masukkan PIN',
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Hapus',
+                showLoaderOnConfirm: true,
+                preConfirm: (pin) => {
+                    if (pin !== "0000") {
+                        Swal.showValidationMessage(`PIN salah! Penghapusan dibatalkan.`);
+                    }
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let riwayat = JSON.parse(localStorage.getItem("riwayatPenjualan")) || [];
+                    riwayat.splice(index, 1);
+                    localStorage.setItem("riwayatPenjualan", JSON.stringify(riwayat));
+                    location.reload();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Transaksi telah dihapus!',
+                    });
+                }
             });
         }
 
@@ -813,6 +863,7 @@
             }
 
             document.getElementById("batalkan-perubahan").style.display = "inline-block";
+            document.querySelector("#kasir-popup button[onclick='tutupKasir()']").style.display = "none";
             bukaKasir();
         }
 
@@ -820,30 +871,8 @@
             indexTransaksiEdit = null;
             localStorage.removeItem("belanja");
             document.getElementById("batalkan-perubahan").style.display = "none";
+            document.querySelector("#kasir-popup button[onclick='tutupKasir()']").style.display = "inline-block";
             tutupKasir();
-        }
-
-        function hapusTransaksi(index) {
-            let pin = prompt("Masukkan PIN untuk menghapus transaksi:");
-            if (pin !== "0000") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Kesalahan',
-                    text: 'PIN salah! Penghapusan dibatalkan.',
-                });
-                return;
-            }
-
-            let riwayat = JSON.parse(localStorage.getItem("riwayatPenjualan")) || [];
-            riwayat.splice(index, 1);
-            localStorage.setItem("riwayatPenjualan", JSON.stringify(riwayat));
-            location.reload();
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil',
-                text: 'Transaksi telah dihapus!',
-            });
         }
     </script>
 </body>
