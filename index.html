@@ -69,12 +69,12 @@
             font-weight: 600;
         }
 
-        tr:nth-child(even) {
-            background-color: #f9fbe7;
+        tr {
+            background-color: white; /* Warna latar belakang default untuk semua baris */
         }
 
         tr:hover {
-            background-color: #f0f8e2;
+            background-color: #f0f8e2; /* Warna latar belakang saat baris dihover */
         }
 
         tr.lunas {
@@ -760,12 +760,18 @@
             localStorage.removeItem("belanja");
             metodePembayaranTerpilih = "";
             tutupKasir();
-            location.reload();
 
+            // Perbarui tampilan secara manual
+            tampilkanSemua();
+            hitungItemTerjual(riwayat);
+
+            // Tampilkan notifikasi berhasil dan muat ulang halaman setelahnya
             Swal.fire({
                 icon: 'success',
                 title: 'Berhasil',
                 text: 'Transaksi telah disimpan!',
+            }).then(() => {
+                location.reload();
             });
         }
 
@@ -790,12 +796,14 @@
                     let daftar = JSON.parse(localStorage.getItem("daftarItem")) || [];
                     daftar.splice(index, 1);
                     localStorage.setItem("daftarItem", JSON.stringify(daftar));
-                    location.reload();
 
+                    // Tampilkan notifikasi berhasil dan muat ulang halaman setelahnya
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil',
                         text: 'Item telah dihapus!',
+                    }).then(() => {
+                        location.reload();
                     });
                 }
             });
@@ -822,12 +830,14 @@
                     let riwayat = JSON.parse(localStorage.getItem("riwayatPenjualan")) || [];
                     riwayat.splice(index, 1);
                     localStorage.setItem("riwayatPenjualan", JSON.stringify(riwayat));
-                    location.reload();
 
+                    // Tampilkan notifikasi berhasil dan muat ulang halaman setelahnya
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil',
                         text: 'Transaksi telah dihapus!',
+                    }).then(() => {
+                        location.reload();
                     });
                 }
             });
