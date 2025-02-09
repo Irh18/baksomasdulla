@@ -322,9 +322,9 @@
                     Total Bayar: Rp 0
                 </div>
                 <div class="pembayaran">
-                    <input type="text" id="uang-pembayaran" placeholder="Uang Pembayaran (Rp)" oninput="formatInput(this)">
+                    <input type="number" id="uang-pembayaran" placeholder="Uang Pembayaran (Rp)" oninput="formatInput(this)" inputmode="numeric">
                     <div id="grab-total-harga" style="display: none;">
-                        <input type="text" id="total-harga-grab" placeholder="Total Harga GRAB (Rp)" oninput="formatInput(this)">
+                        <input type="number" id="total-harga-grab" placeholder="Total Harga GRAB (Rp)" oninput="formatInput(this)" inputmode="numeric">
                     </div>
                     <button onclick="hitungKembalian()" class="filter-button">Hitung Kembalian</button>
                 </div>
@@ -348,7 +348,7 @@
             <h2>Tambah Item</h2>
             <form id="form-item">
                 <input type="text" id="nama-item" placeholder="Nama Item" required>
-                <input type="text" id="harga-item" placeholder="Harga (Rp)" oninput="formatInput(this)" required>
+                <input type="number" id="harga-item" placeholder="Harga (Rp)" oninput="formatInput(this)" inputmode="numeric" required>
                 <button type="submit" class="filter-button">Tambahkan</button>
             </form>
             <h2>Daftar Item</h2>
@@ -607,15 +607,6 @@
         }
 
         function tutupKasir() {
-            let belanja = JSON.parse(localStorage.getItem("belanja")) || [];
-            if (belanja.length > 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Peringatan',
-                    text: 'Tolong Selesaikan Transaksi!',
-                });
-                return;
-            }
             document.getElementById("overlay").style.display = "none";
             document.getElementById("kasir-popup").style.display = "none";
         }
