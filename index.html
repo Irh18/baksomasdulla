@@ -369,6 +369,21 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            // Kembalikan posisi scroll setelah halaman dimuat ulang
+            const savedScrollPosition = localStorage.getItem("scrollPosition");
+            if (savedScrollPosition) {
+                window.scrollTo(0, savedScrollPosition);
+                localStorage.removeItem("scrollPosition"); // Hapus setelah digunakan
+            }
+
+            // Fungsi untuk menyimpan posisi scroll ke localStorage
+            function saveScrollPosition() {
+                localStorage.setItem("scrollPosition", window.scrollY);
+            }
+
+            // Simpan posisi scroll sebelum halaman dimuat ulang
+            window.addEventListener("beforeunload", saveScrollPosition);
+
             tampilkanSemua();
             loadItems();
             setupForm();
