@@ -82,6 +82,15 @@
             color: #155724;
         }
 
+        .total-bayar {
+    display: inline-block;
+    width: 50%;
+    color: white;
+    font-size: 30px;
+    background-color: #800000;
+    font-weight: bold;
+}
+
         form input, .pembayaran input, .kembalian, .total-bayar, .total-keseluruhan, .penghitung-item-box {
             padding: 12px;
             margin: 10px 5px;
@@ -119,13 +128,14 @@
             transform: translateY(-2px);
         }
 
-        button.item-button {
-            background-color: #fff3cd;
-            color: #800020;
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #ced4da;
-        }
+button.item-button {
+    background-color: #fff3cd;
+    color: #800000;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    margin: 0px;
+}
 
         button.item-button:hover {
             background-color: #ffe8b3;
@@ -146,23 +156,23 @@
             border-radius: 6px;
         }
 
-        .penghitung-item-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
+.penghitung-item-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
 
-        .penghitung-item-box {
-            background-color: #fff3cd;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            font-size: 1.2em;
-            color: #800020;
-            width: 150px;
-        }
+.penghitung-item-box {
+    background-color: #fff3cd;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #800000;
+    width: 100px;
+    margin: 0px;
+}
 
         .kasir-popup, .overlay {
             display: none;
@@ -274,11 +284,11 @@
             </div>
             <!-- Penghitung Item Terjual -->
             <div class="penghitung-item-container" id="penghitung-item">
-                <div class="penghitung-item-box">Bakso: <span id="bakso-count">0</span> Porsi</div>
-                <div class="penghitung-item-box">Pangsit: <span id="pangsit-count">0</span> Porsi</div>
-                <div class="penghitung-item-box">Ketupat: <span id="ketupat-count">0</span> Biji</div>
-                <div class="penghitung-item-box">Bakwan: <span id="bakwan-count">0</span> Biji</div>
-                <div class="penghitung-item-box">Kacang: <span id="kacang-count">0</span> Bungkus</div>
+                <div class="penghitung-item-box">Bakso: <span id="bakso-count">0</span> </div>
+                <div class="penghitung-item-box">Pangsit: <span id="pangsit-count">0</span> </div>
+                <div class="penghitung-item-box">Ketupat: <span id="ketupat-count">0</span> </div>
+                <div class="penghitung-item-box">Bakwan: <span id="bakwan-count">0</span> </div>
+                <div class="penghitung-item-box">Kacang: <span id="kacang-count">0</span> </div>
             </div>
             <!-- Pop-up Kasir -->
             <div class="overlay" id="overlay"></div>
