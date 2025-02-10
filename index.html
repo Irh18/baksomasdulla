@@ -232,22 +232,6 @@
             font-size: 0.9em;
             margin: 5px 0;
         }
-
-        .action-popup {
-            display: none;
-            position: absolute;
-            background-color: white;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            padding: 10px;
-        }
-
-        .action-popup button {
-            width: 100%;
-            margin: 5px 0;
-        }
     </style>
 </head>
 <body>
@@ -383,43 +367,11 @@
     <!-- Tombol Input Baru (Ikon Keranjang) -->
     <button class="tombol-keranjang" onclick="bukaKasir()">🛒</button>
 
-    <!-- Pop-up untuk tombol aksi -->
-    <div class="action-popup" id="action-popup">
-        <button onclick="tandaiLunas(currentIndex)" class="filter-button">Lunas</button>
-        <button onclick="editTransaksi(currentIndex)" class="filter-button">Edit</button>
-        <button onclick="hapusTransaksi(currentIndex)" class="batalkan-perubahan">Hapus</button>
-    </div>
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             tampilkanSemua();
             loadItems();
             setupForm();
-
-            // Kembalikan posisi layar setelah halaman dimuat ulang
-            kembalikanPosisiLayar();
-
-            // Tambahkan event listener untuk menampilkan pop-up saat kotak diklik
-            document.getElementById("riwayat-penjualan").addEventListener("click", function (e) {
-                if (e.target.tagName === "TD") {
-                    const row = e.target.closest("tr");
-                    const index = Array.from(row.parentNode.children).indexOf(row);
-                    currentIndex = index - 1; // Kurangi 1 karena ada header
-                    const rect = e.target.getBoundingClientRect();
-                    const popup = document.getElementById("action-popup");
-                    popup.style.display = "block";
-                    popup.style.top = `${rect.top + window.scrollY}px`;
-                    popup.style.left = `${rect.right + window.scrollX}px`;
-                }
-            });
-
-            // Tambahkan event listener untuk menyembunyikan pop-up saat klik di luar
-            document.addEventListener("click", function (e) {
-                const popup = document.getElementById("action-popup");
-                if (!popup.contains(e.target)) {
-                    popup.style.display = "none";
-                }
-            });
         });
 
         function formatRupiah(angka) {
@@ -442,7 +394,6 @@
 
         let metodePembayaranTerpilih = "";
         let indexTransaksiEdit = null;
-        let currentIndex = null;
 
         function pilihMetodePembayaran(metode) {
             metodePembayaranTerpilih = metode;
@@ -505,7 +456,7 @@
             localStorage.setItem("riwayatPenjualan", JSON.stringify(riwayat));
 
             // Ubah warna latar belakang kotak total menjadi hijau
-            let row = document.querySelector(`#riwayat-penjualan tr:nth-child(${index + 2})`);
+            let row = document.querySelector(`#riwayat-penjualan tr:nth-child(${index + 1})`);
             if (row) {
                 row.classList.add('lunas');
             }
@@ -515,9 +466,6 @@
                 title: 'Berhasil',
                 text: 'Transaksi telah ditandai sebagai lunas!',
             });
-
-            // Sembunyikan pop-up setelah aksi selesai
-            document.getElementById("action-popup").style.display = "none";
         }
 
         function hitungItemTerjual(riwayat) {
@@ -819,9 +767,6 @@
             tampilkanSemua();
             hitungItemTerjual(riwayat);
 
-            // Simpan posisi layar sebelum muat ulang halaman
-            simpanPosisiLayar();
-
             // Tampilkan notifikasi berhasil dan muat ulang halaman setelahnya
             Swal.fire({
                 icon: 'success',
@@ -854,9 +799,6 @@
                     let daftar = JSON.parse(localStorage.getItem("daftarItem")) || [];
                     daftar.splice(index, 1);
                     localStorage.setItem("daftarItem", JSON.stringify(daftar));
-
-                    // Simpan posisi layar sebelum muat ulang halaman
-                    simpanPosisiLayar();
 
                     // Tampilkan notifikasi berhasil dan muat ulang halaman setelahnya
                     Swal.fire({
@@ -893,9 +835,6 @@
                     riwayat.splice(index, 1);
                     localStorage.setItem("riwayatPenjualan", JSON.stringify(riwayat));
 
-                    // Simpan posisi layar sebelum muat ulang halaman
-                    simpanPosisiLayar();
-
                     // Tampilkan notifikasi berhasil dan muat ulang halaman setelahnya
                     Swal.fire({
                         icon: 'success',
@@ -905,9 +844,6 @@
                         location.reload();
                     });
                 }
-
-                // Sembunyikan pop-up setelah aksi selesai
-                document.getElementById("action-popup").style.display = "none";
             });
         }
 
@@ -934,9 +870,6 @@
             document.getElementById("batalkan-perubahan").style.display = "inline-block";
             document.querySelector("#kasir-popup button[onclick='tutupKasir()']").style.display = "none";
             bukaKasir();
-
-            // Sembunyikan pop-up setelah aksi selesai
-            document.getElementById("action-popup").style.display = "none";
         }
 
         function batalkanPerubahan() {
@@ -945,21 +878,6 @@
             document.getElementById("batalkan-perubahan").style.display = "none";
             document.querySelector("#kasir-popup button[onclick='tutupKasir()']").style.display = "inline-block";
             tutupKasir();
-        }
-
-        function simpanPosisiLayar() {
-            const posisiLayar = {
-                x: window.scrollX,
-                y: window.scrollY
-            };
-            localStorage.setItem("posisiLayar", JSON.stringify(posisiLayar));
-        }
-
-        function kembalikanPosisiLayar() {
-            const posisiLayar = JSON.parse(localStorage.getItem("posisiLayar"));
-            if (posisiLayar) {
-                window.scrollTo(posisiLayar.x, posisiLayar.y);
-            }
         }
     </script>
 </body>
