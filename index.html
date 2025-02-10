@@ -369,42 +369,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Kembalikan posisi scroll setelah halaman dimuat ulang
-            const savedScrollPosition = localStorage.getItem("scrollPosition");
-            if (savedScrollPosition) {
-                window.scrollTo(0, savedScrollPosition);
-                localStorage.removeItem("scrollPosition"); // Hapus setelah digunakan
-            }
-
-            // Kembalikan halaman aktif setelah halaman dimuat ulang
-            const activePage = localStorage.getItem("activePage");
-            if (activePage) {
-                tampilkanHalaman(activePage);
-                localStorage.removeItem("activePage"); // Hapus setelah digunakan
-            }
-
-            // Fungsi untuk menyimpan posisi scroll ke localStorage
-            function saveScrollPosition() {
-                localStorage.setItem("scrollPosition", window.scrollY);
-            }
-
-            // Fungsi untuk menyimpan halaman aktif ke localStorage
-            function saveActivePage() {
-                const kasirSection = document.getElementById("kasir");
-                const databaseSection = document.getElementById("database");
-                if (kasirSection.style.display === "block") {
-                    localStorage.setItem("activePage", "kasir");
-                } else if (databaseSection.style.display === "block") {
-                    localStorage.setItem("activePage", "database");
-                }
-            }
-
-            // Simpan posisi scroll dan halaman aktif sebelum halaman dimuat ulang
-            window.addEventListener("beforeunload", function () {
-                saveScrollPosition();
-                saveActivePage();
-            });
-
             tampilkanSemua();
             loadItems();
             setupForm();
