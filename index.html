@@ -16,6 +16,10 @@
             color: #333;
         }
 
+        body.no-scroll {
+            overflow: hidden;
+        }
+
         header {
             background-color: #800020;
             color: white;
@@ -555,6 +559,7 @@
         function bukaKasir() {
             document.getElementById("overlay").style.display = "block";
             document.getElementById("kasir-popup").style.display = "block";
+            document.body.classList.add("no-scroll"); // Tambahkan kelas untuk mencegah scrolling
 
             let daftar = JSON.parse(localStorage.getItem("daftarItem")) || [];
             let daftarItemKasir = document.getElementById("daftar-item-kasir");
@@ -597,6 +602,7 @@
 
             document.getElementById("overlay").style.display = "none";
             document.getElementById("kasir-popup").style.display = "none";
+            document.body.classList.remove("no-scroll"); // Hapus kelas untuk mengaktifkan kembali scrolling
         }
 
         function tambahKeBelanja(nama, harga) {
