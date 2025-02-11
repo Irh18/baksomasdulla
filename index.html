@@ -52,24 +52,20 @@
         }
 
         .shift-buttons button {
-    background: #800020;
-    padding: 10px 20px;
-    margin: 0 5px;
-    border: none;
-    border-radius: 6px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    color: white;
-}
+            background: #800020;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            color: white;
+        }
 
         .shift-buttons button.active {
             background-color: #ffc107;
-        }
-
-        .shift-buttons button:hover {
-            background-color: #6d001a;
-            transform: translateY(-2px);
+            font-weight: bold;
         }
 
         main {
@@ -107,8 +103,6 @@
             color: #155724;
         }
 
-
-
         form input, .pembayaran input, .kembalian, .total-bayar, .total-keseluruhan, .penghitung-item-box {
             padding: 12px;
             margin: 10px 5px;
@@ -120,14 +114,14 @@
             box-sizing: border-box;
         }
 
-                .total-bayar {
-    display: inline-block;
-    width: 50%;
-    color: white;
-    font-size: 30px;
-    background-color: #800000;
-    font-weight: bold;
-}
+        .total-bayar {
+            display: inline-block;
+            width: 50%;
+            color: white;
+            font-size: 30px;
+            background-color: #218000;
+            font-weight: bold;
+        }
 
         form input:focus, .pembayaran input:focus {
             border-color: #800020;
@@ -155,14 +149,14 @@
             transform: translateY(-2px);
         }
 
-button.item-button {
-    background-color: #fff3cd;
-    color: #800000;
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ced4da;
-    margin: 0px;
-}
+        button.item-button {
+            background-color: #fff3cd;
+            color: #800000;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            margin: 0px;
+        }
 
         button.item-button:hover {
             background-color: #ffe8b3;
@@ -183,23 +177,23 @@ button.item-button {
             border-radius: 6px;
         }
 
-.penghitung-item-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-}
+        .penghitung-item-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
 
-.penghitung-item-box {
-    background-color: #fff3cd;
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 15px;
-    color: #800000;
-    width: 100px;
-    margin: 0px;
-}
+        .penghitung-item-box {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #800000;
+            width: 100px;
+            margin: 0px;
+        }
 
         .kasir-popup, .overlay {
             display: none;
@@ -216,15 +210,6 @@ button.item-button {
             max-height: 90vh;
             overflow-y: auto;
             border-radius: 10px;
-        }
-
-        .overlay {
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
         }
 
         .daftar-item-kasir {
@@ -273,21 +258,114 @@ button.item-button {
             font-size: 0.9em;
             margin: 5px 0;
         }
+
+        .tombol-pengeluaran {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .tombol-pengeluaran:hover {
+            background-color: #218838;
+            transform: scale(1.1);
+        }
+
+        .pengeluaran-container {
+            margin-top: 20px;
+        }
+
+        .pengeluaran-container table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .pengeluaran-container th, .pengeluaran-container td {
+            border: 1px solid #e9ecef;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .pengeluaran-container th {
+            background-color: #800020;
+            color: white;
+            font-weight: 600;
+        }
+
+        .form-pengeluaran-popup, .overlay {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 10px;
+        }
+
+        .form-pengeluaran-popup h2 {
+            margin-bottom: 20px;
+        }
+
+        .form-pengeluaran-popup input {
+            width: calc(100% - 30px);
+            margin: 10px 5px;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+
+        .form-pengeluaran-popup button {
+            margin: 10px 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            color: white;
+        }
+
+        .form-pengeluaran-popup button.filter-button {
+            background-color: #800020;
+        }
+
+        .form-pengeluaran-popup button.batalkan-perubahan {
+            background-color: #e74c3c;
+        }
     </style>
 </head>
 <body>
     <header>
-    	        <h1>Bakso Mas Dulla</h1>
-
-
+        <h1>Bakso Mas Dulla</h1>
         <nav>
             <a href="#" onclick="tampilkanHalaman('kasir')">Data Penjualan</a> |
             <a href="#" onclick="tampilkanHalaman('database')">Data Menu & Harga</a>
         </nav>
     </header>
     <main>
-
-    	        <div class="shift-buttons">
+        <div class="shift-buttons">
             <button onclick="pindahShift(1)" class="shift-button" id="shift1">Shift 1</button>
             <button onclick="pindahShift(2)" class="shift-button" id="shift2">Shift 2</button>
         </div>
@@ -322,6 +400,24 @@ button.item-button {
                 <div class="penghitung-item-box">Ketupat: <span id="ketupat-count">0</span> </div>
                 <div class="penghitung-item-box">Bakwan: <span id="bakwan-count">0</span> </div>
                 <div class="penghitung-item-box">Kacang: <span id="kacang-count">0</span> </div>
+            </div>
+            <!-- Tabel Pengeluaran -->
+            <div class="pengeluaran-container">
+                <h2>Daftar Pengeluaran</h2>
+                <table id="tabel-pengeluaran">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Deskripsi</th>
+                            <th>Jumlah</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="daftar-pengeluaran">
+                        <!-- Data pengeluaran akan ditampilkan di sini -->
+                    </tbody>
+                </table>
+                <button class="filter-button" onclick="bukaFormPengeluaran()">Tambah Pengeluaran</button>
             </div>
             <!-- Pop-up Kasir -->
             <div class="overlay" id="overlay"></div>
@@ -380,7 +476,7 @@ button.item-button {
                     <button onclick="pilihMetodePembayaran('TF')">TF</button>
                     <button onclick="pilihMetodePembayaran('GRAB')">GRAB</button>
                 </div>
-                <button onclick="simpanTransaksi()" class="filter-button">Simpan Transaksi</button>
+                <button onclick="simpanTransaksi()" class="filter-button" style="background: #218000;">Simpan Transaksi</button>
                 <button onclick="tutupKasir()" class="batalkan-perubahan" id="tutup-button">Tutup</button>
                 <button class="batalkan-perubahan" id="batalkan-perubahan" onclick="batalkanPerubahan()" style="display: none;">Batalkan Perubahan</button>
             </div>
@@ -411,8 +507,23 @@ button.item-button {
         </section>
     </main>
 
-    <!-- Tombol Input Baru (Ikon Keranjang) -->
+    <!-- Tombol Input Pengeluaran -->
+    <button class="tombol-pengeluaran" onclick="bukaFormPengeluaran()">💵</button>
+
+    <!-- Tombol Keranjang -->
     <button class="tombol-keranjang" onclick="bukaKasir()">🛒</button>
+
+    <!-- Form Pengeluaran -->
+    <div class="overlay" id="overlay-pengeluaran"></div>
+    <div class="form-pengeluaran-popup" id="form-pengeluaran-popup">
+        <h2>Tambah Pengeluaran</h2>
+        <form id="form-pengeluaran">
+            <input type="text" id="deskripsi-pengeluaran" placeholder="Deskripsi Pengeluaran" required>
+            <input type="number" id="jumlah-pengeluaran" placeholder="Jumlah (Rp)" oninput="formatInput(this)" inputmode="numeric" required>
+            <button type="submit" class="filter-button">Simpan</button>
+            <button type="button" class="batalkan-perubahan" onclick="tutupFormPengeluaran()">Batal</button>
+        </form>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -420,6 +531,8 @@ button.item-button {
             tampilkanSemua();
             loadItems();
             setupForm();
+            loadPengeluaran();
+            setupFormPengeluaran();
         });
 
         function formatRupiah(angka) {
@@ -918,6 +1031,93 @@ button.item-button {
             });
             document.getElementById(`shift${shift}`).classList.add('active');
             tampilkanSemua();
+        }
+
+        function loadPengeluaran() {
+            let daftarPengeluaran = JSON.parse(localStorage.getItem("daftarPengeluaran")) || [];
+            let tabelPengeluaran = document.getElementById("daftar-pengeluaran");
+
+            tabelPengeluaran.innerHTML = "";
+            daftarPengeluaran.forEach((item, index) => {
+                let row = `<tr>
+                    <td>${index + 1}</td>
+                    <td>${item.deskripsi}</td>
+                    <td>Rp ${formatRupiah(item.jumlah)}</td>
+                    <td>
+                        <button onclick="hapusPengeluaran(${index})" class="batalkan-perubahan">Hapus</button>
+                    </td>
+                </tr>`;
+                tabelPengeluaran.innerHTML += row;
+            });
+        }
+
+        function setupFormPengeluaran() {
+            let formPengeluaran = document.getElementById("form-pengeluaran");
+            formPengeluaran.addEventListener("submit", function (e) {
+                e.preventDefault();
+                let deskripsi = document.getElementById("deskripsi-pengeluaran").value;
+                let jumlah = hapusPemisahRibuan(document.getElementById("jumlah-pengeluaran").value);
+
+                let daftarPengeluaran = JSON.parse(localStorage.getItem("daftarPengeluaran")) || [];
+                daftarPengeluaran.push({ deskripsi, jumlah });
+                localStorage.setItem("daftarPengeluaran", JSON.stringify(daftarPengeluaran));
+
+                loadPengeluaran();
+                formPengeluaran.reset();
+                tutupFormPengeluaran();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: 'Pengeluaran telah ditambahkan!',
+                });
+            });
+        }
+
+        function bukaFormPengeluaran() {
+            document.getElementById("overlay-pengeluaran").style.display = "block";
+            document.getElementById("form-pengeluaran-popup").style.display = "block";
+            document.body.classList.add("no-scroll");
+        }
+
+        function tutupFormPengeluaran() {
+            document.getElementById("overlay-pengeluaran").style.display = "none";
+            document.getElementById("form-pengeluaran-popup").style.display = "none";
+            document.body.classList.remove("no-scroll");
+        }
+
+        function hapusPengeluaran(index) {
+            Swal.fire({
+                title: 'Masukkan PIN',
+                input: 'number',
+                inputAttributes: {
+                    autocapitalize: 'off',
+                    inputmode: 'numeric'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Hapus',
+                showLoaderOnConfirm: true,
+                preConfirm: (pin) => {
+                    if (pin !== "0000") {
+                        Swal.showValidationMessage(`PIN salah! Penghapusan dibatalkan.`);
+                    }
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let daftarPengeluaran = JSON.parse(localStorage.getItem("daftarPengeluaran")) || [];
+                    daftarPengeluaran.splice(index, 1);
+                    localStorage.setItem("daftarPengeluaran", JSON.stringify(daftarPengeluaran));
+
+                    loadPengeluaran();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Pengeluaran telah dihapus!',
+                    });
+                }
+            });
         }
     </script>
 </body>
