@@ -103,7 +103,7 @@
             color: #155724;
         }
 
-        form input, .pembayaran input, .kembalian, .total-bayar, .total-keseluruhan, .penghitung-item-box {
+        form input, .pembayaran input, .kembalian, .total-bayar,.penghitung-item-box {
             padding: 12px;
             margin: 10px 5px;
             border: 1px solid #ced4da;
@@ -256,12 +256,12 @@
             width: 100%;
             padding: 10px;
             font-size: 0.9em;
-            margin: 5px 0;
+            margin: 0px 0;
         }
 
         .tombol-pengeluaran {
             position: fixed;
-            bottom: 80px;
+            bottom: 90px;
             right: 20px;
             background-color: #28a745;
             color: white;
@@ -354,6 +354,26 @@
         .form-pengeluaran-popup button.batalkan-perubahan {
             background-color: #e74c3c;
         }
+
+        .total-keseluruhan-container {
+            display: flex;
+            justify-content: space-evenly;
+            margin-top: 20px;
+        }
+
+        .total-keseluruhan-item {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #800020;
+        }
+
+        .total-pengeluaran {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #800020;
+        }
+
     </style>
 </head>
 <body>
@@ -390,17 +410,18 @@
                 </tbody>
             </table>
             <!-- Total Keseluruhan -->
-            <div class="total-keseluruhan" id="total-keseluruhan">
-                Total Keseluruhan: Rp 0
+            <div class="total-keseluruhan-container">
+                <div class="total-keseluruhan-item" id="total-keseluruhan">
+                    Total Keseluruhan: Rp 0
+                </div>
+                <div class="total-keseluruhan-item" id="total-cash">
+                    Total Cash: Rp 0
+                </div>
+                <div class="total-keseluruhan-item" id="total-cashless">
+                    Total Cashless: Rp 0
+                </div>
             </div>
-            <!-- Penghitung Item Terjual -->
-            <div class="penghitung-item-container" id="penghitung-item">
-                <div class="penghitung-item-box">Bakso: <span id="bakso-count">0</span> </div>
-                <div class="penghitung-item-box">Pangsit: <span id="pangsit-count">0</span> </div>
-                <div class="penghitung-item-box">Ketupat: <span id="ketupat-count">0</span> </div>
-                <div class="penghitung-item-box">Bakwan: <span id="bakwan-count">0</span> </div>
-                <div class="penghitung-item-box">Kacang: <span id="kacang-count">0</span> </div>
-            </div>
+
             <!-- Tabel Pengeluaran -->
             <div class="pengeluaran-container">
                 <h2>Daftar Pengeluaran</h2>
@@ -417,7 +438,18 @@
                         <!-- Data pengeluaran akan ditampilkan di sini -->
                     </tbody>
                 </table>
-                <button class="filter-button" onclick="bukaFormPengeluaran()">Tambah Pengeluaran</button>
+                <div class="total-pengeluaran" id="total-pengeluaran">
+                    Total Pengeluaran: Rp 0
+                </div>
+            </div>
+
+            <!-- Penghitung Item Terjual -->
+            <div class="penghitung-item-container" id="penghitung-item">
+                <div class="penghitung-item-box">Bakso: <span id="bakso-count">0</span> </div>
+                <div class="penghitung-item-box">Pangsit: <span id="pangsit-count">0</span> </div>
+                <div class="penghitung-item-box">Ketupat: <span id="ketupat-count">0</span> </div>
+                <div class="penghitung-item-box">Bakwan: <span id="bakwan-count">0</span> </div>
+                <div class="penghitung-item-box">Kacang: <span id="kacang-count">0</span> </div>
             </div>
             <!-- Pop-up Kasir -->
             <div class="overlay" id="overlay"></div>
@@ -578,6 +610,8 @@
             let riwayat = JSON.parse(localStorage.getItem(`riwayatPenjualanShift${shiftAktif}`)) || [];
             let riwayatPenjualan = document.getElementById("riwayat-penjualan");
             let totalKeseluruhan = 0;
+            let totalCash = 0;
+            let totalCashless = 0;
 
             riwayatPenjualan.innerHTML = "";
 
@@ -587,12 +621,19 @@
 
             riwayat.forEach((item, index) => {
                 totalKeseluruhan += item.total;
+                if (item.keterangan === "CASH") {
+                    totalCash += item.total;
+                } else {
+                    totalCashless += item.total;
+                }
                 let namaItem = item.nama.split(", ").join("<br>");
                 let row = createRow(index, namaItem, item.total, item.keterangan, item.lunas);
                 riwayatPenjualan.innerHTML += row;
             });
 
             document.getElementById("total-keseluruhan").innerText = `Total Keseluruhan: Rp ${formatRupiah(totalKeseluruhan)}`;
+            document.getElementById("total-cash").innerText = `Total Cash: Rp ${formatRupiah(totalCash)}`;
+            document.getElementById("total-cashless").innerText = `Total Cashless: Rp ${formatRupiah(totalCashless)}`;
             hitungItemTerjual(riwayat);
         }
 
@@ -1031,10 +1072,11 @@
             });
             document.getElementById(`shift${shift}`).classList.add('active');
             tampilkanSemua();
+            loadPengeluaran();
         }
 
         function loadPengeluaran() {
-            let daftarPengeluaran = JSON.parse(localStorage.getItem("daftarPengeluaran")) || [];
+            let daftarPengeluaran = JSON.parse(localStorage.getItem(`daftarPengeluaranShift${shiftAktif}`)) || [];
             let tabelPengeluaran = document.getElementById("daftar-pengeluaran");
 
             tabelPengeluaran.innerHTML = "";
@@ -1049,6 +1091,14 @@
                 </tr>`;
                 tabelPengeluaran.innerHTML += row;
             });
+
+            hitungTotalPengeluaran();
+        }
+
+        function hitungTotalPengeluaran() {
+            let daftarPengeluaran = JSON.parse(localStorage.getItem(`daftarPengeluaranShift${shiftAktif}`)) || [];
+            let totalPengeluaran = daftarPengeluaran.reduce((total, item) => total + parseInt(item.jumlah), 0);
+            document.getElementById("total-pengeluaran").innerText = `Total Pengeluaran: Rp ${formatRupiah(totalPengeluaran)}`;
         }
 
         function setupFormPengeluaran() {
@@ -1058,9 +1108,9 @@
                 let deskripsi = document.getElementById("deskripsi-pengeluaran").value;
                 let jumlah = hapusPemisahRibuan(document.getElementById("jumlah-pengeluaran").value);
 
-                let daftarPengeluaran = JSON.parse(localStorage.getItem("daftarPengeluaran")) || [];
+                let daftarPengeluaran = JSON.parse(localStorage.getItem(`daftarPengeluaranShift${shiftAktif}`)) || [];
                 daftarPengeluaran.push({ deskripsi, jumlah });
-                localStorage.setItem("daftarPengeluaran", JSON.stringify(daftarPengeluaran));
+                localStorage.setItem(`daftarPengeluaranShift${shiftAktif}`, JSON.stringify(daftarPengeluaran));
 
                 loadPengeluaran();
                 formPengeluaran.reset();
@@ -1105,9 +1155,9 @@
                 allowOutsideClick: () => !Swal.isLoading()
             }).then((result) => {
                 if (result.isConfirmed) {
-                    let daftarPengeluaran = JSON.parse(localStorage.getItem("daftarPengeluaran")) || [];
+                    let daftarPengeluaran = JSON.parse(localStorage.getItem(`daftarPengeluaranShift${shiftAktif}`)) || [];
                     daftarPengeluaran.splice(index, 1);
-                    localStorage.setItem("daftarPengeluaran", JSON.stringify(daftarPengeluaran));
+                    localStorage.setItem(`daftarPengeluaranShift${shiftAktif}`, JSON.stringify(daftarPengeluaran));
 
                     loadPengeluaran();
 
@@ -1119,6 +1169,7 @@
                 }
             });
         }
+
     </script>
 </body>
 </html>
