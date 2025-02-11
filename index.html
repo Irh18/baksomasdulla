@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kasir</title>
+    <title>Bakso Mas Dulla</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -47,6 +47,31 @@
             color: #ffc107;
         }
 
+        .shift-buttons {
+            margin-bottom: 10px;
+        }
+
+        .shift-buttons button {
+    background: #800020;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    color: white;
+}
+
+        .shift-buttons button.active {
+            background-color: #ffc107;
+        }
+
+        .shift-buttons button:hover {
+            background-color: #6d001a;
+            transform: translateY(-2px);
+        }
+
         main {
             padding: 20px;
         }
@@ -82,14 +107,7 @@
             color: #155724;
         }
 
-        .total-bayar {
-    display: inline-block;
-    width: 50%;
-    color: white;
-    font-size: 30px;
-    background-color: #800000;
-    font-weight: bold;
-}
+
 
         form input, .pembayaran input, .kembalian, .total-bayar, .total-keseluruhan, .penghitung-item-box {
             padding: 12px;
@@ -101,6 +119,15 @@
             width: calc(100% - 30px);
             box-sizing: border-box;
         }
+
+                .total-bayar {
+    display: inline-block;
+    width: 50%;
+    color: white;
+    font-size: 30px;
+    background-color: #800000;
+    font-weight: bold;
+}
 
         form input:focus, .pembayaran input:focus {
             border-color: #800020;
@@ -250,16 +277,22 @@ button.item-button {
 </head>
 <body>
     <header>
-        <h1>Kasir</h1>
+    	        <h1>Bakso Mas Dulla</h1>
+
+
         <nav>
-            <a href="#" onclick="tampilkanHalaman('kasir')">Kasir</a> |
-            <a href="#" onclick="tampilkanHalaman('database')">Kelola Item & Harga</a>
+            <a href="#" onclick="tampilkanHalaman('kasir')">Data Penjualan</a> |
+            <a href="#" onclick="tampilkanHalaman('database')">Data Menu & Harga</a>
         </nav>
     </header>
     <main>
+
+    	        <div class="shift-buttons">
+            <button onclick="pindahShift(1)" class="shift-button" id="shift1">Shift 1</button>
+            <button onclick="pindahShift(2)" class="shift-button" id="shift2">Shift 2</button>
+        </div>
         <!-- Halaman Kasir -->
         <section id="kasir">
-            <h2>Riwayat Penjualan</h2>
             <!-- Tombol Filter -->
             <button class="filter-button" onclick="tampilkanSemua()">Semua</button>
             <button class="filter-button" onclick="filterCash()">Cash</button>
@@ -383,6 +416,7 @@ button.item-button {
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            pindahShift(1); // Default ke Shift 1 saat halaman dimuat
             tampilkanSemua();
             loadItems();
             setupForm();
@@ -408,6 +442,7 @@ button.item-button {
 
         let metodePembayaranTerpilih = "";
         let indexTransaksiEdit = null;
+        let shiftAktif = 1;
 
         function pilihMetodePembayaran(metode) {
             metodePembayaranTerpilih = metode;
@@ -427,7 +462,7 @@ button.item-button {
         }
 
         function tampilkanRiwayat(filter = null) {
-            let riwayat = JSON.parse(localStorage.getItem("riwayatPenjualan")) || [];
+            let riwayat = JSON.parse(localStorage.getItem(`riwayatPenjualanShift${shiftAktif}`)) || [];
             let riwayatPenjualan = document.getElementById("riwayat-penjualan");
             let totalKeseluruhan = 0;
 
@@ -465,9 +500,9 @@ button.item-button {
         }
 
         function tandaiLunas(index) {
-            let riwayat = JSON.parse(localStorage.getItem("riwayatPenjualan")) || [];
+            let riwayat = JSON.parse(localStorage.getItem(`riwayatPenjualanShift${shiftAktif}`)) || [];
             riwayat[index].lunas = true;
-            localStorage.setItem("riwayatPenjualan", JSON.stringify(riwayat));
+            localStorage.setItem(`riwayatPenjualanShift${shiftAktif}`, JSON.stringify(riwayat));
 
             let row = document.querySelector(`#riwayat-penjualan tr:nth-child(${index + 1})`);
             if (row) {
@@ -728,7 +763,7 @@ button.item-button {
                 return;
             }
 
-            let riwayat = JSON.parse(localStorage.getItem("riwayatPenjualan")) || [];
+            let riwayat = JSON.parse(localStorage.getItem(`riwayatPenjualanShift${shiftAktif}`)) || [];
             let totalBayar = belanja.reduce((total, item) => total + item.harga * item.jumlah, 0);
 
             if (metodePembayaranTerpilih === "GRAB") {
@@ -760,7 +795,7 @@ button.item-button {
                 riwayat.push(transaksi);
             }
 
-            localStorage.setItem("riwayatPenjualan", JSON.stringify(riwayat));
+            localStorage.setItem(`riwayatPenjualanShift${shiftAktif}`, JSON.stringify(riwayat));
             localStorage.removeItem("belanja");
             metodePembayaranTerpilih = "";
             tutupKasir();
@@ -828,9 +863,9 @@ button.item-button {
                 allowOutsideClick: () => !Swal.isLoading()
             }).then((result) => {
                 if (result.isConfirmed) {
-                    let riwayat = JSON.parse(localStorage.getItem("riwayatPenjualan")) || [];
+                    let riwayat = JSON.parse(localStorage.getItem(`riwayatPenjualanShift${shiftAktif}`)) || [];
                     riwayat.splice(index, 1);
-                    localStorage.setItem("riwayatPenjualan", JSON.stringify(riwayat));
+                    localStorage.setItem(`riwayatPenjualanShift${shiftAktif}`, JSON.stringify(riwayat));
 
                     tampilkanSemua();
 
@@ -844,7 +879,7 @@ button.item-button {
         }
 
         function editTransaksi(index) {
-            let riwayat = JSON.parse(localStorage.getItem("riwayatPenjualan")) || [];
+            let riwayat = JSON.parse(localStorage.getItem(`riwayatPenjualanShift${shiftAktif}`)) || [];
             let transaksi = riwayat[index];
             indexTransaksiEdit = index;
 
@@ -874,6 +909,15 @@ button.item-button {
             document.getElementById("batalkan-perubahan").style.display = "none";
             document.querySelector("#kasir-popup button[onclick='tutupKasir()']").style.display = "inline-block";
             tutupKasir();
+        }
+
+        function pindahShift(shift) {
+            shiftAktif = shift;
+            document.querySelectorAll('.shift-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(`shift${shift}`).classList.add('active');
+            tampilkanSemua();
         }
     </script>
 </body>
