@@ -191,7 +191,7 @@
             border-radius: 10px;
             font-size: 15px;
             color: #800000;
-            width: 100px;
+            width: 150px;
             margin: 0px;
         }
 
@@ -374,6 +374,50 @@
             color: #800020;
         }
 
+        .penutupan-buku-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .penutupan-buku-container h2 {
+            font-size: 1.5em;
+            color: #800020;
+            margin-bottom: 10px;
+        }
+
+        .penutupan-buku-container small {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .penutupan-buku-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .penutupan-buku-row input, .penutupan-buku-row span {
+            padding: 10px;
+            font-size: 1em;
+            text-align: center;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+        }
+
+        .penutupan-buku-row input {
+            width: 150px;
+        }
+
+        .penutupan-buku-row span {
+            width: 100px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -451,6 +495,24 @@
                 <div class="penghitung-item-box">Bakwan: <span id="bakwan-count">0</span> </div>
                 <div class="penghitung-item-box">Kacang: <span id="kacang-count">0</span> </div>
             </div>
+
+            <!-- Penutupan Buku -->
+            <div class="penutupan-buku-container">
+                <h2>Penutupan Buku</h2>
+                <div class="penutupan-buku-row">
+                    <input type="text" id="input-uang-tunai" placeholder="Input Uang Tunai" oninput="formatInput(this)" inputmode="numeric">
+                    <span id="total-pengeluaran-display">0</span>
+                    <span id="jumlah-1">0</span>
+                    <span id="total-cash-display">0</span>
+                    <span id="selisih">0</span>
+                </div>
+                <div class="penutupan-buku-row">
+                    <span id="jumlah-2">0</span>
+                    <span id="total-cashless-display">0</span>
+                    <span id="total-jumlah">0</span>
+                </div>
+            </div>
+
             <!-- Pop-up Kasir -->
             <div class="overlay" id="overlay"></div>
             <div class="kasir-popup" id="kasir-popup">
@@ -493,9 +555,9 @@
                     Total Bayar: Rp 0
                 </div>
                 <div class="pembayaran">
-                    <input type="number" id="uang-pembayaran" placeholder="Uang Pembayaran (Rp)" oninput="formatInput(this)" inputmode="numeric">
+                    <input type="text" id="uang-pembayaran" placeholder="Uang Pembayaran (Rp)" oninput="formatInput(this)" inputmode="numeric">
                     <div id="grab-total-harga" style="display: none;">
-                        <input type="number" id="total-harga-grab" placeholder="Total Harga GRAB (Rp)" oninput="formatInput(this)" inputmode="numeric">
+                        <input type="text" id="total-harga-grab" placeholder="Total Harga GRAB (Rp)" oninput="formatInput(this)" inputmode="numeric">
                     </div>
                     <button onclick="hitungKembalian()" class="filter-button">Hitung Kembalian</button>
                 </div>
@@ -519,7 +581,7 @@
             <h2>Tambah Item</h2>
             <form id="form-item">
                 <input type="text" id="nama-item" placeholder="Nama Item" required>
-                <input type="number" id="harga-item" placeholder="Harga (Rp)" oninput="formatInput(this)" inputmode="numeric" required>
+                <input type="text" id="harga-item" placeholder="Harga (Rp)" oninput="formatInput(this)" inputmode="numeric" required>
                 <button type="submit" class="filter-button">Tambahkan</button>
             </form>
             <h2>Daftar Item</h2>
@@ -551,7 +613,7 @@
         <h2>Tambah Pengeluaran</h2>
         <form id="form-pengeluaran">
             <input type="text" id="deskripsi-pengeluaran" placeholder="Deskripsi Pengeluaran" required>
-            <input type="number" id="jumlah-pengeluaran" placeholder="Jumlah (Rp)" oninput="formatInput(this)" inputmode="numeric" required>
+            <input type="text" id="jumlah-pengeluaran" placeholder="Jumlah (Rp)" oninput="formatInput(this)" inputmode="numeric" required>
             <button type="submit" class="filter-button">Simpan</button>
             <button type="button" class="batalkan-perubahan" onclick="tutupFormPengeluaran()">Batal</button>
         </form>
@@ -635,6 +697,7 @@
             document.getElementById("total-cash").innerText = `Total Cash: Rp ${formatRupiah(totalCash)}`;
             document.getElementById("total-cashless").innerText = `Total Cashless: Rp ${formatRupiah(totalCashless)}`;
             hitungItemTerjual(riwayat);
+            updatePenutupanBuku();
         }
 
         function createRow(index, namaItem, total, keterangan, lunas) {
@@ -1099,6 +1162,7 @@
             let daftarPengeluaran = JSON.parse(localStorage.getItem(`daftarPengeluaranShift${shiftAktif}`)) || [];
             let totalPengeluaran = daftarPengeluaran.reduce((total, item) => total + parseInt(item.jumlah), 0);
             document.getElementById("total-pengeluaran").innerText = `Total Pengeluaran: Rp ${formatRupiah(totalPengeluaran)}`;
+            updatePenutupanBuku();
         }
 
         function setupFormPengeluaran() {
@@ -1170,6 +1234,32 @@
             });
         }
 
+        function updatePenutupanBuku() {
+            let inputUangTunai = parseFloat(hapusPemisahRibuan(document.getElementById("input-uang-tunai").value)) || 0;
+            let totalPengeluaran = parseFloat(hapusPemisahRibuan(document.getElementById("total-pengeluaran").innerText.replace("Total Pengeluaran: Rp ", ""))) || 0;
+            let totalCash = parseFloat(hapusPemisahRibuan(document.getElementById("total-cash").innerText.replace("Total Cash: Rp ", ""))) || 0;
+            let totalCashless = parseFloat(hapusPemisahRibuan(document.getElementById("total-cashless").innerText.replace("Total Cashless: Rp ", ""))) || 0;
+
+            let jumlah1 = inputUangTunai + totalPengeluaran;
+            let selisih = jumlah1 - totalCash;
+            let jumlah2 = jumlah1 + totalCashless;
+
+            document.getElementById("total-pengeluaran-display").innerText = formatRupiah(totalPengeluaran);
+            document.getElementById("total-cash-display").innerText = formatRupiah(totalCash);
+            document.getElementById("total-cashless-display").innerText = formatRupiah(totalCashless);
+            document.getElementById("jumlah-1").innerText = formatRupiah(jumlah1);
+            document.getElementById("jumlah-2").innerText = formatRupiah(jumlah1);
+            document.getElementById("total-jumlah").innerText = formatRupiah(jumlah2);
+        }
+
+        // Panggil fungsi ini setiap kali ada perubahan pada input atau nilai-nilai lain yang relevan
+        document.getElementById("input-uang-tunai").addEventListener("input", updatePenutupanBuku);
+        document.getElementById("total-pengeluaran").addEventListener("DOMSubtreeModified", updatePenutupanBuku);
+        document.getElementById("total-cash").addEventListener("DOMSubtreeModified", updatePenutupanBuku);
+        document.getElementById("total-cashless").addEventListener("DOMSubtreeModified", updatePenutupanBuku);
     </script>
 </body>
 </html>
+
+
+ingat
