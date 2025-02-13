@@ -6,6 +6,7 @@
     <title>Bakso Mas Dulla</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -45,6 +46,20 @@
 
         nav a:hover {
             color: #ffc107;
+        }
+
+        .date-filter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .date-input {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1em;
         }
 
         .shift-buttons {
@@ -103,7 +118,7 @@
             color: #155724;
         }
 
-        form input, .pembayaran input, .kembalian, .total-bayar,.penghitung-item-box {
+        form input, .pembayaran input, .kembalian, .total-bayar, .penghitung-item-box {
             padding: 12px;
             margin: 10px 5px;
             border: 1px solid #ced4da;
@@ -375,6 +390,9 @@
         }
 
         .penutupan-buku-container {
+            display: inline-grid;
+            justify-content: center;
+            width: 90%;
             margin-top: 20px;
             padding: 20px;
             background-color: white;
@@ -385,7 +403,7 @@
         .penutupan-buku-container h2 {
             font-size: 1.5em;
             color: #800020;
-            margin-bottom: 10px;
+            margin-bottom: 40px;
         }
 
         .penutupan-buku-container small {
@@ -397,6 +415,7 @@
 
         .penutupan-buku-row {
             display: flex;
+            justify-content: center;
             align-items: center;
             gap: 10px;
             margin-bottom: 15px;
@@ -418,6 +437,103 @@
             width: 100px;
             display: inline-block;
         }
+        .floating-label-group {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .floating-label-group input {
+            padding: 10px 10px 10px 0;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            width: 150px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .floating-label-group label {
+            position: absolute;
+            left: 18%;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1em;
+            color: #aaa;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+
+        .floating-label-group input:focus + label,
+        .floating-label-group input:not(:placeholder-shown) + label {
+            top: 0;
+            transform: translateY(-70%);
+            font-size: 13px;
+            font-weight: bold;
+            color: #800020;
+        }
+
+        .floating-label-target:not(:empty) + .tunai {
+            top: 0;
+            left: 265px;
+            transform: translateY(-75%);
+            font-size: 13px;
+            font-weight: bold;
+            color: #800020;
+        }
+
+        .floating-label-target:not(:empty) + .pengeluaran {
+            top: 0;
+            left: 30px;
+            transform: translateY(-70%);
+            font-size: 13px;
+            font-weight: bold;
+            color: #800020;
+        }
+
+        .floating-label-target:not(:empty) + .totalbuku {
+            top: 0;
+            left: 180px;
+            transform: translateY(-70%);
+            font-size: 13px;
+            font-weight: bold;
+            color: #800020;
+        }
+
+        .floating-label-target:not(:empty) + .selisih {
+            top: 0;
+            left: 335px;
+            transform: translateY(-75%);
+            font-size: 13px;
+            font-weight: bold;
+            color: #800020;
+        }
+
+        .floating-label-target:not(:empty) + .jumlah2 {
+            top: 0;
+            left: 30px;
+            transform: translateY(-70%);
+            font-size: 13px;
+            font-weight: bold;
+            color: #800020;
+        }
+
+        .floating-label-target:not(:empty) + .qris {
+            top: 0;
+            left: 180px;
+            transform: translateY(-70%);
+            font-size: 13px;
+            font-weight: bold;
+            color: #800020;
+        }
+
+        .floating-label-target:not(:empty) + .total {
+            top: 0;
+            left: 335px;
+            transform: translateY(-75%);
+            font-size: 13px;
+            font-weight: bold;
+            color: #800020;
+        }
+
     </style>
 </head>
 <body>
@@ -427,6 +543,9 @@
             <a href="#" onclick="tampilkanHalaman('kasir')">Data Penjualan</a> |
             <a href="#" onclick="tampilkanHalaman('database')">Data Menu & Harga</a>
         </nav>
+        <div class="date-filter">
+            <input type="date" id="tanggal-filter" class="date-input">
+        </div>
     </header>
     <main>
         <div class="shift-buttons">
@@ -437,8 +556,8 @@
         <section id="kasir">
             <!-- Tombol Filter -->
             <button class="filter-button" onclick="tampilkanSemua()">Semua</button>
-            <button class="filter-button" onclick="filterCash()">Cash</button>
-            <button class="filter-button" onclick="filterCashless()">Cashless</button>
+            <button class="filter-button" onclick="filterCash()">Total Buku</button>
+            <button class="filter-button" onclick="filterCashless()">QRIS | TF | GRAB</button>
             <table>
                 <thead>
                     <tr>
@@ -456,13 +575,13 @@
             <!-- Total Keseluruhan -->
             <div class="total-keseluruhan-container">
                 <div class="total-keseluruhan-item" id="total-keseluruhan">
-                    Total Keseluruhan: Rp 0
+                    Total: Rp 0
                 </div>
                 <div class="total-keseluruhan-item" id="total-cash">
-                    Total Cash: Rp 0
+                    TB: Rp 0
                 </div>
                 <div class="total-keseluruhan-item" id="total-cashless">
-                    Total Cashless: Rp 0
+                    QRIS: Rp 0
                 </div>
             </div>
 
@@ -499,17 +618,36 @@
             <!-- Penutupan Buku -->
             <div class="penutupan-buku-container">
                 <h2>Penutupan Buku</h2>
-                <div class="penutupan-buku-row">
-                    <input type="text" id="input-uang-tunai" placeholder="Input Uang Tunai" oninput="formatInput(this)" inputmode="numeric">
-                    <span id="total-pengeluaran-display">0</span>
-                    <span id="jumlah-1">0</span>
-                    <span id="total-cash-display">0</span>
-                    <span id="selisih">0</span>
+                <div class="penutupan-buku-row floating-label-group">
+                    <input type="text" id="input-uang-tunai" placeholder=" " oninput="formatInput(this)" inputmode="numeric">
+                    <label for="input-uang-tunai">Tunai</label>
+                    <div> <p>+</p> </div>
+                    <span id="total-pengeluaran-display" class="floating-label-target">0</span>
+                    <label for="total-pengeluaran-display" class="tunai">Pengeluaran</label>
+                </div>
+
+                <div class="penutupan-buku-row floating-label-group">
+                    <div> <p>=</p> </div>
+                    <span id="jumlah-1" class="floating-label-target">0</span>
+                    <label for="jumlah-1" class="pengeluaran">Jumlah</label>
+                    <div> <p>-</p> </div>
+                    <span id="total-cash-display" class="floating-label-target">0</span>
+                    <label for="total-cash-display" class="totalbuku">Total Buku</label>
+                    <div> <p>=</p> </div>
+                    <span id="selisih" class="floating-label-target">0</span>
+                    <label for="jumlah-1" class="selisih">Selisih</label>
                 </div>
                 <div class="penutupan-buku-row">
-                    <span id="jumlah-2">0</span>
-                    <span id="total-cashless-display">0</span>
-                    <span id="total-jumlah">0</span>
+                    <div class="penutupan-buku-row floating-label-group">
+                        <span id="jumlah-2" class="floating-label-target">0</span>
+                        <label for="jumlah-2" class="jumlah2">Jumlah</label>
+                        <div> <p>+</p> </div>
+                        <span id="total-cashless-display" class="floating-label-target">0</span>
+                        <label for="total-cashless-display" class="qris">QRIS</label>
+                        <div> <p>=</p> </div>
+                        <span id="total-jumlah" class="floating-label-target">0</span>
+                        <label for="total-jumlah" class="total">Total</label>
+                    </div>
                 </div>
             </div>
 
@@ -607,6 +745,9 @@
     <!-- Tombol Keranjang -->
     <button class="tombol-keranjang" onclick="bukaKasir()">🛒</button>
 
+    <!-- Tombol Unduh -->
+    <button class="tombol-unduh" onclick="unduhData()">📥 Unduh</button>
+
     <!-- Form Pengeluaran -->
     <div class="overlay" id="overlay-pengeluaran"></div>
     <div class="form-pengeluaran-popup" id="form-pengeluaran-popup">
@@ -627,6 +768,63 @@
             setupForm();
             loadPengeluaran();
             setupFormPengeluaran();
+            loadInputUangTunai(); // Muat nilai input-uang-tunai saat halaman dimuat
+            loadTanggalFilter(); // Muat tanggal filter saat halaman dimuat
+
+            // Tambahkan event listener untuk memfilter data secara otomatis saat tanggal dipilih
+            document.getElementById("tanggal-filter").addEventListener("change", function () {
+                filterTanggal();
+            });
+        });
+
+        function loadTanggalFilter() {
+            let tanggalInput = document.getElementById("tanggal-filter");
+            tanggalFilter = localStorage.getItem("tanggalFilter") || "";
+            if (tanggalFilter) {
+                tanggalInput.value = tanggalFilter;
+                filterTanggal();
+            }
+        }
+
+        function filterTanggal() {
+            let tanggalInput = document.getElementById("tanggal-filter").value;
+            tanggalFilter = tanggalInput;
+            localStorage.setItem("tanggalFilter", tanggalFilter);
+            tampilkanSemua();
+            loadPengeluaran();
+            loadInputUangTunai(); // Load the value of input-uang-tunai based on the selected date
+            updatePenutupanBuku();
+        }
+
+        function loadInputUangTunai() {
+            let inputUangTunai = document.getElementById("input-uang-tunai");
+            let tanggal = tanggalFilter || new Date().toISOString().split('T')[0];
+            let nilaiUangTunai = localStorage.getItem(`inputUangTunaiShift${shiftAktif}_${tanggal}`) || "0";
+            inputUangTunai.value = formatRupiah(nilaiUangTunai);
+        }
+
+        function saveInputUangTunai() {
+            let inputUangTunai = document.getElementById("input-uang-tunai");
+            let nilaiUangTunai = hapusPemisahRibuan(inputUangTunai.value);
+            let tanggal = tanggalFilter || new Date().toISOString().split('T')[0];
+            localStorage.setItem(`inputUangTunaiShift${shiftAktif}_${tanggal}`, nilaiUangTunai);
+        }
+
+        function pindahShift(shift) {
+            shiftAktif = shift;
+            document.querySelectorAll('.shift-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(`shift${shift}`).classList.add('active');
+            tampilkanSemua();
+            loadPengeluaran();
+            loadInputUangTunai(); // Load the value of input-uang-tunai based on the selected date
+        }
+
+        document.getElementById("input-uang-tunai").addEventListener("input", function() {
+            formatInput(this);
+            saveInputUangTunai(); // Simpan nilai input-uang-tunai saat diubah
+            updatePenutupanBuku();
         });
 
         function formatRupiah(angka) {
@@ -650,6 +848,7 @@
         let metodePembayaranTerpilih = "";
         let indexTransaksiEdit = null;
         let shiftAktif = 1;
+        let tanggalFilter = "";
 
         function pilihMetodePembayaran(metode) {
             metodePembayaranTerpilih = metode;
@@ -670,6 +869,8 @@
 
         function tampilkanRiwayat(filter = null) {
             let riwayat = JSON.parse(localStorage.getItem(`riwayatPenjualanShift${shiftAktif}`)) || [];
+            riwayat = riwayat.filter(item => !tanggalFilter || item.tanggal === tanggalFilter);
+
             let riwayatPenjualan = document.getElementById("riwayat-penjualan");
             let totalKeseluruhan = 0;
             let totalCash = 0;
@@ -693,9 +894,9 @@
                 riwayatPenjualan.innerHTML += row;
             });
 
-            document.getElementById("total-keseluruhan").innerText = `Total Keseluruhan: Rp ${formatRupiah(totalKeseluruhan)}`;
-            document.getElementById("total-cash").innerText = `Total Cash: Rp ${formatRupiah(totalCash)}`;
-            document.getElementById("total-cashless").innerText = `Total Cashless: Rp ${formatRupiah(totalCashless)}`;
+            document.getElementById("total-keseluruhan").innerText = `Total : Rp ${formatRupiah(totalKeseluruhan)}`;
+            document.getElementById("total-cash").innerText = `TB: Rp ${formatRupiah(totalCash)}`;
+            document.getElementById("total-cashless").innerText = `QRIS: Rp ${formatRupiah(totalCashless)}`;
             hitungItemTerjual(riwayat);
             updatePenutupanBuku();
         }
@@ -735,6 +936,9 @@
 
         function hitungItemTerjual(riwayat) {
             let penghitung = { Bakso: 0, Pangsit: 0, Ketupat: 0, Bakwan: 0, Kacang: 0 };
+
+            // Filter transactions by the selected date
+            riwayat = riwayat.filter(item => !tanggalFilter || item.tanggal === tanggalFilter);
 
             riwayat.forEach((transaksi) => {
                 transaksi.nama.split(", ").forEach((item) => {
@@ -1003,6 +1207,7 @@
                 total: totalBayar,
                 keterangan: metodePembayaranTerpilih || "CASH",
                 lunas: false,
+                tanggal: tanggalFilter || new Date().toISOString().split('T')[0]
             };
 
             if (indexTransaksiEdit !== null) {
@@ -1128,18 +1333,10 @@
             tutupKasir();
         }
 
-        function pindahShift(shift) {
-            shiftAktif = shift;
-            document.querySelectorAll('.shift-button').forEach(button => {
-                button.classList.remove('active');
-            });
-            document.getElementById(`shift${shift}`).classList.add('active');
-            tampilkanSemua();
-            loadPengeluaran();
-        }
-
         function loadPengeluaran() {
             let daftarPengeluaran = JSON.parse(localStorage.getItem(`daftarPengeluaranShift${shiftAktif}`)) || [];
+            daftarPengeluaran = daftarPengeluaran.filter(item => !tanggalFilter || item.tanggal === tanggalFilter);
+
             let tabelPengeluaran = document.getElementById("daftar-pengeluaran");
 
             tabelPengeluaran.innerHTML = "";
@@ -1173,7 +1370,7 @@
                 let jumlah = hapusPemisahRibuan(document.getElementById("jumlah-pengeluaran").value);
 
                 let daftarPengeluaran = JSON.parse(localStorage.getItem(`daftarPengeluaranShift${shiftAktif}`)) || [];
-                daftarPengeluaran.push({ deskripsi, jumlah });
+                daftarPengeluaran.push({ deskripsi, jumlah, tanggal: tanggalFilter || new Date().toISOString().split('T')[0] });
                 localStorage.setItem(`daftarPengeluaranShift${shiftAktif}`, JSON.stringify(daftarPengeluaran));
 
                 loadPengeluaran();
@@ -1237,19 +1434,21 @@
         function updatePenutupanBuku() {
             let inputUangTunai = parseFloat(hapusPemisahRibuan(document.getElementById("input-uang-tunai").value)) || 0;
             let totalPengeluaran = parseFloat(hapusPemisahRibuan(document.getElementById("total-pengeluaran").innerText.replace("Total Pengeluaran: Rp ", ""))) || 0;
-            let totalCash = parseFloat(hapusPemisahRibuan(document.getElementById("total-cash").innerText.replace("Total Cash: Rp ", ""))) || 0;
-            let totalCashless = parseFloat(hapusPemisahRibuan(document.getElementById("total-cashless").innerText.replace("Total Cashless: Rp ", ""))) || 0;
+            let totalCash = parseFloat(hapusPemisahRibuan(document.getElementById("total-cash").innerText.replace("TB: Rp ", ""))) || 0;
+            let totalCashless = parseFloat(hapusPemisahRibuan(document.getElementById("total-cashless").innerText.replace("QRIS: Rp ", ""))) || 0;
 
             let jumlah1 = inputUangTunai + totalPengeluaran;
-            let selisih = jumlah1 - totalCash;
+            let totalCashDisplay = totalCash; // Pastikan totalCashDisplay dihitung dengan benar
+            let selisih = jumlah1 - totalCashDisplay; // Gunakan totalCashDisplay dalam perhitungan selisih
             let jumlah2 = jumlah1 + totalCashless;
 
             document.getElementById("total-pengeluaran-display").innerText = formatRupiah(totalPengeluaran);
-            document.getElementById("total-cash-display").innerText = formatRupiah(totalCash);
+            document.getElementById("total-cash-display").innerText = formatRupiah(totalCashDisplay);
             document.getElementById("total-cashless-display").innerText = formatRupiah(totalCashless);
             document.getElementById("jumlah-1").innerText = formatRupiah(jumlah1);
             document.getElementById("jumlah-2").innerText = formatRupiah(jumlah1);
             document.getElementById("total-jumlah").innerText = formatRupiah(jumlah2);
+            document.getElementById("selisih").innerText = formatRupiah(selisih); // Tampilkan selisih
         }
 
         // Panggil fungsi ini setiap kali ada perubahan pada input atau nilai-nilai lain yang relevan
@@ -1257,6 +1456,82 @@
         document.getElementById("total-pengeluaran").addEventListener("DOMSubtreeModified", updatePenutupanBuku);
         document.getElementById("total-cash").addEventListener("DOMSubtreeModified", updatePenutupanBuku);
         document.getElementById("total-cashless").addEventListener("DOMSubtreeModified", updatePenutupanBuku);
+
+        function unduhData() {
+            // Get the selected date and active sheet
+            let tanggal = document.getElementById("tanggal-filter").value || new Date().toISOString().split('T')[0];
+            let sheetAktif = shiftAktif === 1 ? "Shift1" : "Shift2";
+
+            // Prepare data for export
+            let riwayat = JSON.parse(localStorage.getItem(`riwayatPenjualanShift${shiftAktif}`)) || [];
+            let daftarPengeluaran = JSON.parse(localStorage.getItem(`daftarPengeluaranShift${shiftAktif}`)) || [];
+
+            // Filter data by the selected date
+            riwayat = riwayat.filter(item => !tanggal || item.tanggal === tanggal);
+            daftarPengeluaran = daftarPengeluaran.filter(item => !tanggal || item.tanggal === tanggal);
+
+            // Calculate penghitung bakso
+            let penghitung = { Bakso: 0, Pangsit: 0, Ketupat: 0, Bakwan: 0, Kacang: 0 };
+            riwayat.forEach((transaksi) => {
+                transaksi.nama.split(", ").forEach((item) => {
+                    let [jumlah, ...nama] = item.split(" ");
+                    let namaItem = nama.join(" ");
+                    if (namaItem.toLowerCase().includes("bakso")) penghitung.Bakso += parseInt(jumlah);
+                    if (namaItem.toLowerCase().includes("pangsit")) penghitung.Pangsit += parseInt(jumlah);
+                    if (namaItem.toLowerCase().includes("ketupat")) penghitung.Ketupat += parseInt(jumlah);
+                    if (namaItem.toLowerCase().includes("bakwan")) penghitung.Bakwan += parseInt(jumlah);
+                    if (namaItem.toLowerCase().includes("kacang")) penghitung.Kacang += parseInt(jumlah);
+                });
+            });
+
+            // Calculate penutupan buku
+            let inputUangTunai = parseFloat(hapusPemisahRibuan(document.getElementById("input-uang-tunai").value)) || 0;
+            let totalPengeluaran = parseFloat(hapusPemisahRibuan(document.getElementById("total-pengeluaran").innerText.replace("Total Pengeluaran: Rp ", ""))) || 0;
+            let totalCash = parseFloat(hapusPemisahRibuan(document.getElementById("total-cash").innerText.replace("TB: Rp ", ""))) || 0;
+            let totalCashless = parseFloat(hapusPemisahRibuan(document.getElementById("total-cashless").innerText.replace("QRIS: Rp ", ""))) || 0;
+
+            let jumlah1 = inputUangTunai + totalPengeluaran;
+            let totalCashDisplay = totalCash; // Pastikan totalCashDisplay dihitung dengan benar
+            let selisih = jumlah1 - totalCashDisplay; // Gunakan totalCashDisplay dalam perhitungan selisih
+            let jumlah2 = jumlah1 + totalCashless;
+
+            let penutupanBuku = {
+                "Tunai": inputUangTunai,
+                "Pengeluaran": totalPengeluaran,
+                "Jumlah": jumlah1,
+                "Total Buku": totalCashDisplay,
+                "Selisih": selisih,
+                "Jumlah ": jumlah1,
+                "QRIS": totalCashless,
+                "Jumlah2": jumlah2,
+              
+            };
+
+            // Create a workbook and add worksheets
+            let wb = XLSX.utils.book_new();
+
+            // Add riwayat penjualan to the workbook
+            let wsRiwayat = XLSX.utils.json_to_sheet(riwayat);
+            XLSX.utils.book_append_sheet(wb, wsRiwayat, "RiwayatPenjualan");
+
+            // Add daftar pengeluaran to the workbook
+            let wsPengeluaran = XLSX.utils.json_to_sheet(daftarPengeluaran);
+            XLSX.utils.book_append_sheet(wb, wsPengeluaran, "DaftarPengeluaran");
+
+            // Add penghitung bakso to the workbook
+            let wsPenghitung = XLSX.utils.json_to_sheet([penghitung]);
+            XLSX.utils.book_append_sheet(wb, wsPenghitung, "PenghitungBakso");
+
+            // Add penutupan buku to the workbook
+            let wsPenutupanBuku = XLSX.utils.json_to_sheet([penutupanBuku]);
+            XLSX.utils.book_append_sheet(wb, wsPenutupanBuku, "PenutupanBuku");
+
+            // Generate the file name
+            let fileName = `${tanggal}_${sheetAktif}.xlsx`;
+
+            // Export the workbook
+            XLSX.writeFile(wb, fileName);
+        }
     </script>
 </body>
 </html>
