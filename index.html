@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bakso Mas Dulla</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -80,7 +80,7 @@
         }
 
         .shift-buttons button.active {
-            background-color: #ffc107;
+            background-color: green;
             font-weight: bold;
         }
 
@@ -165,22 +165,23 @@
             transform: translateY(-2px);
         }
 
-        button.item-button {
-            background-color: #fff3cd;
-            color: #800000;
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            margin: 0px;
-        }
+		button.item-button {
+		    font-weight: bold;
+		    background-color: #d10000;
+		    color: white;
+		    width: 100%;
+		    padding: 10px;
+		    border: 1px solid #ced4da;
+		    margin: 0px;
+		}
 
-        button.item-button:hover {
-            background-color: #ffe8b3;
-            color: #6d001a;
-        }
+		button.item-button:hover {
+		    background-color: #6d001a;
+		    color: #ffffff;
+		}
 
         .metode-pembayaran button.active {
-            background-color: #491e83;
+            background-color: green;
         }
 
         .tutup-merah {
@@ -269,7 +270,7 @@
         }
 
         .tombol-aksi button {
-            width: 100%;
+            width: 80%;
             padding: 10px;
             font-size: 0.9em;
             margin: 0px 0;
@@ -538,6 +539,11 @@
         .tombol-unduh {
 			background: green;
         }
+
+		button {
+		  -webkit-tap-highlight-color: transparent;
+		}
+
 
     </style>
 </head>
@@ -915,8 +921,8 @@
                 <td>${keterangan}</td>
                 <td>
                     <div class="tombol-aksi">
-                        <button onclick="tandaiLunas(${index})" class="filter-button">Lunas</button>
-                        <button onclick="editTransaksi(${index})" class="filter-button">Edit</button>
+                        <button style="background: green;" onclick="tandaiLunas(${index})" class="filter-button">Lunas</button>
+                        <button style="background: #05479b;" onclick="editTransaksi(${index})" class="filter-button">Edit</button>
                         <button onclick="hapusTransaksi(${index})" class="batalkan-perubahan">Hapus</button>
                     </div>
                 </td>
