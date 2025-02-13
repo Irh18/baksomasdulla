@@ -50,9 +50,10 @@
 
         .date-filter {
             display: flex;
-            align-items: center;
+            justify-content: center;
             gap: 10px;
             margin-bottom: 10px;
+            margin-top:10px;
         }
 
         .date-input {
@@ -243,7 +244,7 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: #800020;
+            background-color: green;
             color: white;
             border: none;
             border-radius: 50%;
@@ -278,7 +279,7 @@
             position: fixed;
             bottom: 90px;
             right: 20px;
-            background-color: #28a745;
+            background-color: #800020;
             color: white;
             border: none;
             border-radius: 50%;
@@ -534,6 +535,10 @@
             color: #800020;
         }
 
+        .tombol-unduh {
+			background: green;
+        }
+
     </style>
 </head>
 <body>
@@ -552,6 +557,10 @@
             <button onclick="pindahShift(1)" class="shift-button" id="shift1">Shift 1</button>
             <button onclick="pindahShift(2)" class="shift-button" id="shift2">Shift 2</button>
         </div>
+
+            <!-- Tombol Unduh -->
+    <button class="tombol-unduh" onclick="unduhData()">Download Laporan Keuangan</button>
+
         <!-- Halaman Kasir -->
         <section id="kasir">
             <!-- Tombol Filter -->
@@ -744,9 +753,6 @@
 
     <!-- Tombol Keranjang -->
     <button class="tombol-keranjang" onclick="bukaKasir()">🛒</button>
-
-    <!-- Tombol Unduh -->
-    <button class="tombol-unduh" onclick="unduhData()">📥 Unduh</button>
 
     <!-- Form Pengeluaran -->
     <div class="overlay" id="overlay-pengeluaran"></div>
