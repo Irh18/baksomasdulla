@@ -165,20 +165,20 @@
             transform: translateY(-2px);
         }
 
-		button.item-button {
-		    font-weight: bold;
-		    background-color: #d10000;
-		    color: white;
-		    width: 100%;
-		    padding: 10px;
-		    border: 1px solid #ced4da;
-		    margin: 0px;
-		}
+        button.item-button {
+            font-weight: bold;
+            background-color: #d10000;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            margin: 0px;
+        }
 
-		button.item-button:hover {
-		    background-color: #6d001a;
-		    color: #ffffff;
-		}
+        button.item-button:hover {
+            background-color: #6d001a;
+            color: #ffffff;
+        }
 
         .metode-pembayaran button.active {
             background-color: green;
@@ -537,12 +537,12 @@
         }
 
         .tombol-unduh {
-			background: green;
+            background: green;
         }
 
-		button {
-		  -webkit-tap-highlight-color: transparent;
-		}
+        button {
+          -webkit-tap-highlight-color: transparent;
+        }
 
 
     </style>
@@ -566,6 +566,7 @@
 
             <!-- Tombol Unduh -->
     <button class="tombol-unduh" onclick="unduhData()">Download Laporan Keuangan</button>
+
 
         <!-- Halaman Kasir -->
         <section id="kasir">
@@ -773,21 +774,29 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            pindahShift(1); // Default ke Shift 1 saat halaman dimuat
-            tampilkanSemua();
-            loadItems();
-            setupForm();
-            loadPengeluaran();
-            setupFormPengeluaran();
-            loadInputUangTunai(); // Muat nilai input-uang-tunai saat halaman dimuat
-            loadTanggalFilter(); // Muat tanggal filter saat halaman dimuat
+document.addEventListener("DOMContentLoaded", function () {
+    // Ambil nilai shiftAktif dari local storage
+    let savedShift = localStorage.getItem("shiftAktif");
+    if (savedShift) {
+        shiftAktif = parseInt(savedShift, 10);
+    } else {
+        shiftAktif = 1; // Default ke Shift 1 jika tidak ada nilai yang disimpan
+    }
 
-            // Tambahkan event listener untuk memfilter data secara otomatis saat tanggal dipilih
-            document.getElementById("tanggal-filter").addEventListener("change", function () {
-                filterTanggal();
-            });
-        });
+    pindahShift(shiftAktif); // Gunakan nilai shiftAktif yang diambil dari local storage
+    tampilkanSemua();
+    loadItems();
+    setupForm();
+    loadPengeluaran();
+    setupFormPengeluaran();
+    loadInputUangTunai(); // Muat nilai input-uang-tunai saat halaman dimuat
+    loadTanggalFilter(); // Muat tanggal filter saat halaman dimuat
+
+    // Tambahkan event listener untuk memfilter data secara otomatis saat tanggal dipilih
+    document.getElementById("tanggal-filter").addEventListener("change", function () {
+        filterTanggal();
+    });
+});
 
         function loadTanggalFilter() {
             let tanggalInput = document.getElementById("tanggal-filter");
@@ -822,16 +831,19 @@
             localStorage.setItem(`inputUangTunaiShift${shiftAktif}_${tanggal}`, nilaiUangTunai);
         }
 
-        function pindahShift(shift) {
-            shiftAktif = shift;
-            document.querySelectorAll('.shift-button').forEach(button => {
-                button.classList.remove('active');
-            });
-            document.getElementById(`shift${shift}`).classList.add('active');
-            tampilkanSemua();
-            loadPengeluaran();
-            loadInputUangTunai(); // Load the value of input-uang-tunai based on the selected date
-        }
+function pindahShift(shift) {
+    shiftAktif = shift;
+    localStorage.setItem("shiftAktif", shiftAktif); // Simpan nilai shiftAktif ke local storage
+    document.querySelectorAll('.shift-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    document.getElementById(`shift${shift}`).classList.add('active');
+    tampilkanSemua();
+    loadPengeluaran();
+    loadInputUangTunai(); // Load the value of input-uang-tunai based on the selected date
+        updatePenutupanBuku(); // Perbarui penutupan buku setiap kali shift diubah
+
+}
 
         document.getElementById("input-uang-tunai").addEventListener("input", function() {
             formatInput(this);
@@ -929,22 +941,24 @@
             </tr>`;
         }
 
-        function tandaiLunas(index) {
-            let riwayat = JSON.parse(localStorage.getItem(`riwayatPenjualanShift${shiftAktif}`)) || [];
-            riwayat[index].lunas = true;
-            localStorage.setItem(`riwayatPenjualanShift${shiftAktif}`, JSON.stringify(riwayat));
+function tandaiLunas(index) {
+    let riwayat = JSON.parse(localStorage.getItem(`riwayatPenjualanShift${shiftAktif}`)) || [];
+    riwayat[index].lunas = true;
+    localStorage.setItem(`riwayatPenjualanShift${shiftAktif}`, JSON.stringify(riwayat));
 
-            let row = document.querySelector(`#riwayat-penjualan tr:nth-child(${index + 1})`);
-            if (row) {
-                row.classList.add('lunas');
-            }
+    let row = document.querySelector(`#riwayat-penjualan tr:nth-child(${index + 1})`);
+    if (row) {
+        row.classList.add('lunas');
+    }
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil',
-                text: 'Transaksi telah ditandai sebagai lunas!',
-            });
-        }
+    // Hapus atau komentari baris berikut untuk menghilangkan notifikasi
+    // Swal.fire({
+    //     icon: 'success',
+    //     title: 'Berhasil',
+    //     text: 'Transaksi telah ditandai sebagai lunas!',
+    // });
+}
+
 
         function hitungItemTerjual(riwayat) {
             let penghitung = { Bakso: 0, Pangsit: 0, Ketupat: 0, Bakwan: 0, Kacang: 0 };
@@ -1367,12 +1381,15 @@
             hitungTotalPengeluaran();
         }
 
-        function hitungTotalPengeluaran() {
-            let daftarPengeluaran = JSON.parse(localStorage.getItem(`daftarPengeluaranShift${shiftAktif}`)) || [];
-            let totalPengeluaran = daftarPengeluaran.reduce((total, item) => total + parseInt(item.jumlah), 0);
-            document.getElementById("total-pengeluaran").innerText = `Total Pengeluaran: Rp ${formatRupiah(totalPengeluaran)}`;
-            updatePenutupanBuku();
-        }
+function hitungTotalPengeluaran() {
+    let daftarPengeluaran = JSON.parse(localStorage.getItem(`daftarPengeluaranShift${shiftAktif}`)) || [];
+    daftarPengeluaran = daftarPengeluaran.filter(item => !tanggalFilter || item.tanggal === tanggalFilter);
+
+    let totalPengeluaran = daftarPengeluaran.reduce((total, item) => total + parseInt(item.jumlah), 0);
+    document.getElementById("total-pengeluaran").innerText = `Total Pengeluaran: Rp ${formatRupiah(totalPengeluaran)}`;
+    updatePenutupanBuku();
+}
+
 
         function setupFormPengeluaran() {
             let formPengeluaran = document.getElementById("form-pengeluaran");
@@ -1469,81 +1486,85 @@
         document.getElementById("total-cash").addEventListener("DOMSubtreeModified", updatePenutupanBuku);
         document.getElementById("total-cashless").addEventListener("DOMSubtreeModified", updatePenutupanBuku);
 
-        function unduhData() {
-            // Get the selected date and active sheet
-            let tanggal = document.getElementById("tanggal-filter").value || new Date().toISOString().split('T')[0];
-            let sheetAktif = shiftAktif === 1 ? "Shift1" : "Shift2";
+function unduhData() {
+    try {
+        // Ambil tanggal yang dipilih atau tanggal hari ini
+        let tanggal = document.getElementById("tanggal-filter").value || new Date().toISOString().split('T')[0];
+        let sheetAktif = shiftAktif === 1 ? "Shift1" : "Shift2";
 
-            // Prepare data for export
-            let riwayat = JSON.parse(localStorage.getItem(`riwayatPenjualanShift${shiftAktif}`)) || [];
-            let daftarPengeluaran = JSON.parse(localStorage.getItem(`daftarPengeluaranShift${shiftAktif}`)) || [];
+        // Ambil data riwayat penjualan dan pengeluaran dari Local Storage
+        let riwayat = JSON.parse(localStorage.getItem(`riwayatPenjualanShift${shiftAktif}`)) || [];
+        let daftarPengeluaran = JSON.parse(localStorage.getItem(`daftarPengeluaranShift${shiftAktif}`)) || [];
 
-            // Filter data by the selected date
-            riwayat = riwayat.filter(item => !tanggal || item.tanggal === tanggal);
-            daftarPengeluaran = daftarPengeluaran.filter(item => !tanggal || item.tanggal === tanggal);
+        // Filter data berdasarkan tanggal yang dipilih
+        riwayat = riwayat.filter(item => !tanggal || item.tanggal === tanggal);
+        daftarPengeluaran = daftarPengeluaran.filter(item => !tanggal || item.tanggal === tanggal);
 
-            // Calculate penghitung bakso
-            let penghitung = { Bakso: 0, Pangsit: 0, Ketupat: 0, Bakwan: 0, Kacang: 0 };
-            riwayat.forEach((transaksi) => {
-                transaksi.nama.split(", ").forEach((item) => {
-                    let [jumlah, ...nama] = item.split(" ");
-                    let namaItem = nama.join(" ");
-                    if (namaItem.toLowerCase().includes("bakso")) penghitung.Bakso += parseInt(jumlah);
-                    if (namaItem.toLowerCase().includes("pangsit")) penghitung.Pangsit += parseInt(jumlah);
-                    if (namaItem.toLowerCase().includes("ketupat")) penghitung.Ketupat += parseInt(jumlah);
-                    if (namaItem.toLowerCase().includes("bakwan")) penghitung.Bakwan += parseInt(jumlah);
-                    if (namaItem.toLowerCase().includes("kacang")) penghitung.Kacang += parseInt(jumlah);
-                });
+        // Hitung jumlah item yang terjual
+        let penghitung = { Bakso: 0, Pangsit: 0, Ketupat: 0, Bakwan: 0, Kacang: 0 };
+        riwayat.forEach((transaksi) => {
+            transaksi.nama.split(", ").forEach((item) => {
+                let [jumlah, ...nama] = item.split(" ");
+                let namaItem = nama.join(" ");
+                if (namaItem.toLowerCase().includes("bakso")) penghitung.Bakso += parseInt(jumlah) || 0;
+                if (namaItem.toLowerCase().includes("pangsit")) penghitung.Pangsit += parseInt(jumlah) || 0;
+                if (namaItem.toLowerCase().includes("ketupat")) penghitung.Ketupat += parseInt(jumlah) || 0;
+                if (namaItem.toLowerCase().includes("bakwan")) penghitung.Bakwan += parseInt(jumlah) || 0;
+                if (namaItem.toLowerCase().includes("kacang")) penghitung.Kacang += parseInt(jumlah) || 0;
             });
+        });
 
-            // Calculate penutupan buku
-            let inputUangTunai = parseFloat(hapusPemisahRibuan(document.getElementById("input-uang-tunai").value)) || 0;
-            let totalPengeluaran = parseFloat(hapusPemisahRibuan(document.getElementById("total-pengeluaran").innerText.replace("Total Pengeluaran: Rp ", ""))) || 0;
-            let totalCash = parseFloat(hapusPemisahRibuan(document.getElementById("total-cash").innerText.replace("TB: Rp ", ""))) || 0;
-            let totalCashless = parseFloat(hapusPemisahRibuan(document.getElementById("total-cashless").innerText.replace("QRIS: Rp ", ""))) || 0;
+        // Ambil dan hitung data penutupan buku
+        let inputUangTunai = parseFloat(hapusPemisahRibuan(document.getElementById("input-uang-tunai").value)) || 0;
+        let totalPengeluaran = parseFloat(hapusPemisahRibuan(document.getElementById("total-pengeluaran").innerText.replace("Total Pengeluaran: Rp ", ""))) || 0;
+        let totalCash = parseFloat(hapusPemisahRibuan(document.getElementById("total-cash").innerText.replace("TB: Rp ", ""))) || 0;
+        let totalCashless = parseFloat(hapusPemisahRibuan(document.getElementById("total-cashless").innerText.replace("QRIS: Rp ", ""))) || 0;
 
-            let jumlah1 = inputUangTunai + totalPengeluaran;
-            let totalCashDisplay = totalCash; // Pastikan totalCashDisplay dihitung dengan benar
-            let selisih = jumlah1 - totalCashDisplay; // Gunakan totalCashDisplay dalam perhitungan selisih
-            let jumlah2 = jumlah1 + totalCashless;
+        let jumlah1 = inputUangTunai + totalPengeluaran;
+        let selisih = jumlah1 - totalCash;
+        let jumlah2 = jumlah1 + totalCashless;
 
-            let penutupanBuku = {
-                "Tunai": inputUangTunai,
-                "Pengeluaran": totalPengeluaran,
-                "Jumlah": jumlah1,
-                "Total Buku": totalCashDisplay,
-                "Selisih": selisih,
-                "Jumlah ": jumlah1,
-                "QRIS": totalCashless,
-                "Jumlah2": jumlah2,
-              
-            };
+        let penutupanBuku = {
+            "Tunai": inputUangTunai,
+            "Pengeluaran": totalPengeluaran,
+            "Jumlah": jumlah1,
+            "Total Buku": totalCash,
+            "Selisih": selisih,
+            "QRIS": totalCashless,
+            "Jumlah2": jumlah2,
+        };
 
-            // Create a workbook and add worksheets
-            let wb = XLSX.utils.book_new();
+        // Buat workbook dan tambahkan lembar kerja
+        let wb = XLSX.utils.book_new();
 
-            // Add riwayat penjualan to the workbook
-            let wsRiwayat = XLSX.utils.json_to_sheet(riwayat);
-            XLSX.utils.book_append_sheet(wb, wsRiwayat, "RiwayatPenjualan");
+        // Tambahkan riwayat penjualan
+        let wsRiwayat = XLSX.utils.json_to_sheet(riwayat);
+        XLSX.utils.book_append_sheet(wb, wsRiwayat, "RiwayatPenjualan");
 
-            // Add daftar pengeluaran to the workbook
-            let wsPengeluaran = XLSX.utils.json_to_sheet(daftarPengeluaran);
-            XLSX.utils.book_append_sheet(wb, wsPengeluaran, "DaftarPengeluaran");
+        // Tambahkan daftar pengeluaran
+        let wsPengeluaran = XLSX.utils.json_to_sheet(daftarPengeluaran);
+        XLSX.utils.book_append_sheet(wb, wsPengeluaran, "DaftarPengeluaran");
 
-            // Add penghitung bakso to the workbook
-            let wsPenghitung = XLSX.utils.json_to_sheet([penghitung]);
-            XLSX.utils.book_append_sheet(wb, wsPenghitung, "PenghitungBakso");
+        // Tambahkan penghitung item
+        let wsPenghitung = XLSX.utils.json_to_sheet([penghitung]);
+        XLSX.utils.book_append_sheet(wb, wsPenghitung, "PenghitungBakso");
 
-            // Add penutupan buku to the workbook
-            let wsPenutupanBuku = XLSX.utils.json_to_sheet([penutupanBuku]);
-            XLSX.utils.book_append_sheet(wb, wsPenutupanBuku, "PenutupanBuku");
+        // Tambahkan data penutupan buku
+        let wsPenutupanBuku = XLSX.utils.json_to_sheet([penutupanBuku]);
+        XLSX.utils.book_append_sheet(wb, wsPenutupanBuku, "PenutupanBuku");
 
-            // Generate the file name
-            let fileName = `${tanggal}_${sheetAktif}.xlsx`;
+        // Tentukan nama file
+        let fileName = `${tanggal}_${sheetAktif}.xlsx`;
 
-            // Export the workbook
-            XLSX.writeFile(wb, fileName);
-        }
+        // Ekspor workbook menjadi file Excel
+        XLSX.writeFile(wb, fileName);
+
+    } catch (error) {
+        console.error("Terjadi kesalahan saat mengunduh data:", error);
+        alert("Terjadi kesalahan saat mengunduh data. Silakan coba lagi.");
+    }
+}
+
     </script>
 </body>
 </html>
